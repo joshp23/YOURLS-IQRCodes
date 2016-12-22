@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.0.3
+Version: 1.0.4
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -35,12 +35,11 @@ function iqrcodes_do_page() {
 
 	// some values necessary for display
 	
-	if ( $opt[4] == 'preserve' ) {
-		$D_chk = null;
-		$P_chk = 'checked';
-	} else {
-		$D_chk = 'checked';
-		$P_chk = null;
+	$D_chk = $P_chk = null;
+	switch ($opt[4]) {
+		case 'preserve': $P_chk = 'checked'; break;
+		case 'delete':   $D_chk = 'checked'; break;
+		default:  	 $P_chk = 'checked'; break;
 	}
 	
 	$H_chk = $Q_chk = $M_chk = $L_chk = null;
