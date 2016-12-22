@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.0.2
+Version: 1.0.3
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -399,7 +399,7 @@ function iqrcodes_activate() {
 }
 
 // purge cache on disable
-yourls_add_action('deactivated_dnsbl/plugin.php', 'iqrcodes_deactivate');
+yourls_add_action('deactivated_iqrcodes/plugin.php', 'iqrcodes_deactivate');
 function iqrcodes_deactivate() {
 
 	$opt = iqrcodes_get_opts();
