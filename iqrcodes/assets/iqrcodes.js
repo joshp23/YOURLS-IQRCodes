@@ -1,18 +1,13 @@
 function iqrcodes(url, site) {
-
 	if ( !( typeof url === 'undefined' ) || url ) {
 		var qrcimg = url;
-	}
-	else {
+	} else {
 		url = ( url == null ? $( '#copylink' ).val() : url );
+		var key = time() + "iqrcodes";
+		var fn = 'qrc_' + md5(url) + '.' + iqrcodes_imagetype;
+		var qrcimg = '/srv/?id=iqrcodes&key=' + md5(key) + '&fn=' + fn;
 	}
-	
-	var key = time() + "iqrcodes";
-	
-	var fn = 'qrc_' + md5(url) + '.png';
-	
-	var qrcimg = '/srv/?id=iqrcodes&key=' + md5(key) + '&fn=' + fn;
-	
+
 	var insertimg = "<div id='qrcode' class='share'><img id='myid' src='" + qrcimg + "' /></div>"
 	
 	if ( $( '#qrcode' ).length > 0 )
@@ -28,6 +23,7 @@ function time() {
 	var timestamp = Math.round(timeInSec / 60);
 	return timestamp;
 }
+
 $(document).ready( function( ){
 	// Share button behavior
 	$( '.button_share' ).click( function( ){

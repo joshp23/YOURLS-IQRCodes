@@ -56,7 +56,6 @@
  *
  *      =======================================================================
 */
-
 // get plugin id or die
 if( isset($_GET['id'])) {
 	$id = $_GET['id'];
@@ -333,8 +332,8 @@ switch( $type ) {							// so that we can match header info
 /*	case "jpe": 	$ctype="image/jpeg"; 							break;
 	case "jfif": 	$ctype="image/pipeg"; 							break;
 */	case "png": 	$ctype="image/png"; 							break;
-/*	case "svg": 	$ctype="image/svg+xml"; 						break;
-	case "tif": 	$ctype="image/tiff"; 							break;
+	case "svg": 	$ctype="image/svg+xml"; 						break;
+/*	case "tif": 	$ctype="image/tiff"; 							break;
 	case "tiff": 	$ctype="image/tiff"; 							break;
 	case "ras": 	$ctype="image/x-cmu-raster"; 						break;
 	case "cmx": 	$ctype="image/x-cmx"; 							break;
