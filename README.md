@@ -25,8 +25,8 @@ This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcod
 * streamlined version of the QR Code generation library
 * almost half the total size in bytes
   * This can be reduced in half yet again by disabling and deleting the PHP QR Code cache, which was left in for enhanced performance.This setting can be found on lnie 100 of `assets/phpqrcode.php`
- * Select output image type
- * Include an optional logo file
+* Select output image type
+* Include an optional logo file
   
 ## Installation
 1. Download this repo and extract the `iqrcodes` folder to `YOURLS/user/plugins/`
