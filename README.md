@@ -30,9 +30,10 @@ This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcod
   
 ## Installation
 1. Download this repo and extract the `iqrcodes` folder to `YOURLS/user/plugins/`
-2. Set permissions
-3. Enable module, default config works fine, or visit IQRCodes page to fine tune.
-4. Have fun!
+2. Move `assets/srv.php` to `YOURLS/pages/`
+3. Set permissions
+4. Enable module, default config works fine, or visit IQRCodes page to fine tune.
+5. Have fun!
 
 ## Credits
 [Inline QRcode](http://techlister.com/plugins-2/qrcode-plugin-for-yourls/354/) by Savoul Pelister is the base of this fork
