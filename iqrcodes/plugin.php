@@ -360,7 +360,7 @@ function iqrcodes_sharebox( $data ) {
 	$data['qrcimg'] = $imgname;
 
 	if ( !file_exists( $filepath ) )
-		QRcode::$opt[5]( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+		QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
 
 	// required for direct call to yourls_add_new_link() which does not fire the javascript - lets do it manually
 	$data['qrimage'] = "<script>iqrcodes('$imgname', '$base');</script>";
@@ -386,7 +386,7 @@ function iqrcodes_add_url( $data ) {
 	
 	$data['qrcimg'] = $imgname;
 	
-	QRcode::$opt[5]( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+	QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
 	
 	$data['html'] .= "<script>iqrcodes( '$imgname' , '$base' );</script>";
 	
@@ -422,7 +422,7 @@ function iqrcodes_edit_url( $data ) {
 
 	$data['qrcimg'] = $imgname;
 	
-	QRcode::$opt[5]( $base . '/' . $newkeyword, $newfilepath,  $opt[1], $opt[2], $opt[3] );
+	QRcode::{$opt[5]}( $base . '/' . $newkeyword, $newfilepath,  $opt[1], $opt[2], $opt[3] );
 	
 	return $data;
 }
