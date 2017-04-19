@@ -164,7 +164,7 @@
         //----------------------------------------------------------------------
         public static function clearCache()
         {
-            self::{$frames} = array();
+            self::$frames = array();
         }
         
         //----------------------------------------------------------------------
@@ -360,25 +360,25 @@
         //----------------------------------------------------------------------
         public static function getDataLength($version, $level)
         {
-            return self::{$capacity[$version][QRCAP_WORDS]} - self::{$capacity[$version][QRCAP_EC][$level]};
+            return self::$capacity[$version][QRCAP_WORDS] - self::$capacity[$version][QRCAP_EC][$level];
         }
         
         //----------------------------------------------------------------------
         public static function getECCLength($version, $level)
         {
-            return self::{$capacity[$version][QRCAP_EC][$level]};
+            return self::$capacity[$version][QRCAP_EC][$level];
         }
         
         //----------------------------------------------------------------------
         public static function getWidth($version)
         {
-            return self::{$capacity[$version][QRCAP_WIDTH]};
+            return self::$capacity[$version][QRCAP_WIDTH];
         }
         
         //----------------------------------------------------------------------
         public static function getRemainder($version)
         {
-            return self::{$capacity[$version][QRCAP_REMINDER]};
+            return self::$capacity[$version][QRCAP_REMINDER];
         }
         
         //----------------------------------------------------------------------
@@ -386,7 +386,7 @@
         {
 
             for($i=1; $i<= QRSPEC_VERSION_MAX; $i++) {
-                $words  = self::{$capacity[$i][QRCAP_WORDS]} - self::{$capacity[$i][QRCAP_EC][$level]};
+                $words  = self::$capacity[$i][QRCAP_WORDS] - self::$capacity[$i][QRCAP_EC][$level];
                 if($words >= $size) 
                     return $i;
             }
@@ -417,7 +417,7 @@
                 $l = 2;
             }
 
-            return self::{$lengthTableBits[$mode][$l]};
+            return self::$lengthTableBits[$mode][$l];
         }
         
         //----------------------------------------------------------------------
@@ -434,7 +434,7 @@
                 $l = 2;
             }
 
-            $bits = self::{$lengthTableBits[$mode][$l]};
+            $bits = self::$lengthTableBits[$mode][$l];
             $words = (1 << $bits) - 1;
             
             if($mode == QR_MODE_KANJI) {
@@ -501,8 +501,8 @@
                 $spec = array(0,0,0,0,0);
             }
 
-            $b1   = self::{$eccTable[$version][$level][0]};
-            $b2   = self::{$eccTable[$version][$level][1]};
+            $b1   = self::$eccTable[$version][$level][0];
+            $b2   = self::$eccTable[$version][$level][1];
             $data = self::getDataLength($version, $level);
             $ecc  = self::getECCLength($version, $level);
 
@@ -573,30 +573,30 @@
             if($version < 2)
                 return;
 
-            $d = self::{$alignmentPattern[$version][1]} - self::{$alignmentPattern[$version][0]};
+            $d = self::$alignmentPattern[$version][1] - self::$alignmentPattern[$version][0];
             if($d < 0) {
                 $w = 2;
             } else {
-                $w = (int)(($width - self::{$alignmentPattern[$version][0]}) / $d + 2);
+                $w = (int)(($width - self::$alignmentPattern[$version][0]) / $d + 2);
             }
 
             if($w * $w - 3 == 1) {
-                $x = self::{$alignmentPattern[$version][0]};
-                $y = self::{$alignmentPattern[$version][0]};
+                $x = self::$alignmentPattern[$version][0];
+                $y = self::$alignmentPattern[$version][0];
                 self::putAlignmentMarker($frame, $x, $y);
                 return;
             }
 
-            $cx = self::{$alignmentPattern[$version][0]};
+            $cx = self::$alignmentPattern[$version][0];
             for($x=1; $x<$w - 1; $x++) {
                 self::putAlignmentMarker($frame, 6, $cx);
                 self::putAlignmentMarker($frame, $cx,  6);
                 $cx += $d;
             }
 
-            $cy = self::{$alignmentPattern[$version][0]};
+            $cy = self::$alignmentPattern[$version][0];
             for($y=0; $y<$w-1; $y++) {
-                $cx = self::{$alignmentPattern[$version][0]};
+                $cx = self::$alignmentPattern[$version][0];
                 for($x=0; $x<$w-1; $x++) {
                     self::putAlignmentMarker($frame, $cx, $cy);
                     $cx += $d;
@@ -626,7 +626,7 @@
             if($version < 7 || $version > QRSPEC_VERSION_MAX)
                 return 0;
 
-            return self::{$versionPattern[$version -7]};
+            return self::$versionPattern[$version -7];
         }
 
         // Format information --------------------------------------------------
@@ -647,7 +647,7 @@
             if($level < 0 || $level > 3)
                 return 0;                
 
-            return self::{$formatInfo[$level][$mask]};
+            return self::$formatInfo[$level][$mask];
         }
 
         // Frame ---------------------------------------------------------------
@@ -681,7 +681,7 @@
         //----------------------------------------------------------------------
         public static function createFrame($version)
         {
-            $width = self::{$capacity[$version][QRCAP_WIDTH]};
+            $width = self::$capacity[$version][QRCAP_WIDTH];
             $frameLine = str_repeat ("\0", $width);
             $frame = array_fill(0, $width, $frameLine);
 
@@ -828,26 +828,26 @@
             if($version < 1 || $version > QRSPEC_VERSION_MAX) 
                 return null;
 
-            if(!isset(self::{$frames[$version]})) {
+            if(!isset(self::$frames[$version])) {
                 
                 $fileName = QR_CACHE_DIR.'frame_'.$version.'.dat';
                 
                 if (QR_CACHEABLE) {
                     if (file_exists($fileName)) {
-                        self::{$frames[$version]} = self::unserial(file_get_contents($fileName));
+                        self::$frames[$version] = self::unserial(file_get_contents($fileName));
                     } else {
-                        self::{$frames[$version]} = self::createFrame($version);
-                        file_put_contents($fileName, self::serial(self::{$frames[$version]}));
+                        self::$frames[$version] = self::createFrame($version);
+                        file_put_contents($fileName, self::serial(self::$frames[$version]));
                     }
                 } else {
-                    self::{$frames[$version]} = self::createFrame($version);
+                    self::$frames[$version] = self::createFrame($version);
                 }
             }
             
-            if(is_null(self::{$frames[$version]}))
+            if(is_null(self::$frames[$version]))
                 return null;
 
-            return self::{$frames[$version]};
+            return self::$frames[$version];
         }
 
         //----------------------------------------------------------------------
@@ -1405,7 +1405,7 @@
         //----------------------------------------------------------------------
         public static function lookAnTable($c)
         {
-            return (($c > 127)?-1:self::{$anTable[$c]});
+            return (($c > 127)?-1:self::$anTable[$c]);
         }
         
         //----------------------------------------------------------------------
@@ -2322,7 +2322,7 @@
         //----------------------------------------------------------------------
         public static function init_rs($symsize, $gfpoly, $fcr, $prim, $nroots, $pad)
         {
-            foreach(self::{$items} as $rs) {
+            foreach(self::$items as $rs) {
                 if($rs->pad != $pad)       continue;
                 if($rs->nroots != $nroots) continue;
                 if($rs->mm != $symsize)    continue;
@@ -2334,7 +2334,7 @@
             }
 
             $rs = QRrsItem::init_rs_char($symsize, $gfpoly, $fcr, $prim, $nroots, $pad);
-            array_unshift(self::{$items}, $rs);
+            array_unshift(self::$items, $rs);
 
             return $rs;
         }
