@@ -135,7 +135,7 @@ switch ($id) {
 		
 	case 'iqrcodes':
 		$path = yourls_get_option('IQRCodes_cache_path');
-		if($path == null) $path = 'user/cache/qr';
+		if($path == null) $path = 'user/plugins/iqrcodes/cache/qr';
 		$path = $_SERVER['DOCUMENT_ROOT'] . '/' . $path;
 		break;
 		
