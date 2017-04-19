@@ -311,7 +311,7 @@ function iqrcodes_get_opts() {
 	$logo_position	= yourls_get_option('iqrcodes_logo_position');
 	
 	// Set defaults
-	if ($QRC_DIR 	== null) $QRC_DIR   = 'user/cache/qr';
+	if ($QRC_DIR 	== null) $QRC_DIR   = dirname(__FILE__).'/cache/qr';
 	if ($EC 	== null) $EC_LVL    = 'H';
 	if ($img_size 	== null) $img_size  = '5';			// 165 X 165 (10 = 330 X 330)
 	if ($bdr_size 	== null) $bdr_size  = '2';
