@@ -489,7 +489,7 @@ function iqrcodes_mvdir( $old , $new ) {
 	$new = $_SERVER['DOCUMENT_ROOT'] . '/' . $new . '/';
 	
 	if ( !file_exists( $old ) || $old == null ) {
-		snapshot_cache_mkdir( $new );
+		iqrcodes_mkdir( $new );
 	} else { 
 		if ( !file_exists( $new ) ) {
 			rename( $old , $new );
