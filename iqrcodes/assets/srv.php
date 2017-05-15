@@ -2,7 +2,7 @@
 /*	
  *	=======================================================================
  *
- *	U-SRV v 1.1.7
+ *	U-SRV v 1.1.8
  *		
  *	This is a universal file server (for YOURLS)
  *	by Josh Panter <joshu at unfettered dot net>
