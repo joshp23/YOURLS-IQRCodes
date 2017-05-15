@@ -177,7 +177,7 @@
                 $frame = QRspec::newFrame($a);
                 if (QR_IMAGE) {
                     $fileName = QR_CACHE_DIR.'frame_'.$a.$opt[5];
-                    QRimage::$opt[5](self::binarize($frame), $fileName, 1, 0);
+                    QRimage::{$opt[5]}(self::binarize($frame), $fileName, 1, 0);
                 }
 				
 				$width = count($frame);
