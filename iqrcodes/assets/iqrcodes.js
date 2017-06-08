@@ -1,14 +1,48 @@
 function iqrcodes(url, site) {
+
 	if ( !( typeof url === 'undefined' ) || url ) {
 		var qrcimg = url;
-	} else {
-		url = ( url == null ? $( '#copylink' ).val() : url );
-		var key = time() + "iqrcodes";
-		var fn = 'qrc_' + md5(url) + '.' + iqrcodes_imagetype;
-		var qrcimg = '/srv/?id=iqrcodes&key=' + md5(key) + '&fn=' + fn;
 	}
+	else {
+		var shorturl = ( url == null ? $( '#copylink' ).val() : url );
 
-	var insertimg = "<div id='qrcode' class='share'><img id='myid' src='" + qrcimg + "' /></div>"
+		var base_url = window.location.origin;
+
+		function getCookie(name) {
+
+			var nameEQ = name + "=";
+
+			var ca = document.cookie.split(';');
+
+			for(var i=0;i < ca.length;i++) {
+
+				var c = ca[i];
+			
+				while (c.charAt(0)==' ') c = c.substring(1,c.length);
+
+				if (c.indexOf(nameEQ) == 0)
+
+					if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+
+				}
+
+			return null;
+
+		}
+    		var timestamp = getCookie('usrv_iqrcodes');
+
+		var key = md5(timestamp + 'iqrcodes');
+	
+		var fn = 'qrc_' + md5(shorturl) + '.png';
+	
+		var qrcimg = base_url + '/srv/?id=iqrcodes&key=' + key + '&fn=' + fn;
+
+		    console.log('key =' + key);
+		    console.log('cookie =' + timestamp);
+
+	}
+	
+	var insertimg = "<div id='qrcode' class='share'><h3>QR Code</h3><img id='myid' src='" + qrcimg + "' /></div>"
 	
 	if ( $( '#qrcode' ).length > 0 )
 		$( '#qrcode' ).remove( );
@@ -16,12 +50,6 @@ function iqrcodes(url, site) {
 		$( "#shareboxes" ).append( insertimg );        // Append new elements
 		$( "div#qrcode img" ).css( "width", "100px" );
 		$( "div#qrcode img" ).css( "height", "100px" );
-}
-
-function time() {
-	var timeInSec = Math.floor(new Date().getTime() / 1000);
-	var timestamp = Math.round(timeInSec / 60);
-	return timestamp;
 }
 
 $(document).ready( function( ){
@@ -37,4 +65,3 @@ $(document).ready( function( ){
 		  
 	//iqrcodes();
 });
-
