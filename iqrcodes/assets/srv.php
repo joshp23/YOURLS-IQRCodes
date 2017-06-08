@@ -2,7 +2,7 @@
 /*	
  *	=======================================================================
  *
- *	U-SRV v 1.1.8
+ *	U-SRV v 1.1.9
  *		
  *	This is a universal file server (for YOURLS)
  *	by Josh Panter <joshu at unfettered dot net>
@@ -96,6 +96,9 @@ if( isset($_GET['key'])) {
 // check access key
 $now = round(time()/60);
 $lock = md5($now . $id);
+// set a cookie to help with javascript calls
+$cname = "usrv_" . $id;
+setcookie($cname,$now, 0, "/");
 if($lock !== $key) die('FAIL: bad access key');
 
 /*
