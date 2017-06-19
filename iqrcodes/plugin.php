@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.1.3
+Version: 1.1.4
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -339,8 +339,7 @@ function iqrcodes_key() {
 	$key = md5($now . 'iqrcodes');
 	return $key;
 }
-
-//Generate QR Code for shorturls generated before plugin installation.
+//Generate QR Code for shorturls generated before plugin installation. Currently you have to visit the "stats" page in order for this to work.
 yourls_add_filter( 'share_box_data', 'iqrcodes_sharebox' );
 function iqrcodes_sharebox( $data ) {
 
@@ -359,7 +358,7 @@ function iqrcodes_sharebox( $data ) {
 
 	$data['qrcimg'] = $imgname;
 
-	if ( !file_exists( $filepath ) )
+	if ( !file_exists( $filepath ) && $shorturl == !null )
 		QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
 
 	// required for direct call to yourls_add_new_link() which does not fire the javascript - lets do it manually
