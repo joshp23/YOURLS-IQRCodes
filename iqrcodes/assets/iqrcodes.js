@@ -59,9 +59,9 @@ $(document).ready( function( ){
 	});
 				
 	// Tab behavior on stats page
-	$('a[href=#stat_tab_share]').click( function( ){
+	$('a[href="#stat_tab_share"]').click( function( ){
 		iqrcodes( );
 	});
 		  
-	//iqrcodes();
+	iqrcodes();
 });
