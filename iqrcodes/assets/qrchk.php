@@ -19,24 +19,19 @@
 // No direct call
 if( !defined( 'YOURLS_ABSPATH' ) ) die();
 
-if( $_POST['action'] == 'qrchk' ) {
+if( ($_POST['action'] == 'qrchk') && isset($_POST['data']) && ($_POST['data'] !== null) ) {
 
 	$data = $_POST['data'];
 	$shorturl = urldecode( $data );
 
-	iqrcodes_mkdir( $opt[0] );
-
         $opt  = iqrcodes_get_opts();
-	$base = YOURLS_SITE;
-	$key = iqrcodes_key();
-	
 	$filename = '/qrc_' . md5($shorturl) . "." . $opt[5];
 	$filepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0]. '/' . $filename;
 
-	$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $filename;
-
-	if ( !file_exists( $filepath ) && $shorturl == !null )
+	if ( !file_exists( $filepath ) && $shorturl == !null ) {
+		iqrcodes_mkdir( $opt[0] );
 		QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+	}
 } else {
 	echo <<<HTML
 		<html>
