@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.1.4
+Version: 1.2.0
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -339,32 +339,6 @@ function iqrcodes_key() {
 	$key = md5($now . 'iqrcodes');
 	return $key;
 }
-//Generate QR Code for shorturls generated before plugin installation. Currently you have to visit the "stats" page in order for this to work.
-yourls_add_filter( 'share_box_data', 'iqrcodes_sharebox' );
-function iqrcodes_sharebox( $data ) {
-
-	$shorturl = $data['shorturl'];
-        $opt  = iqrcodes_get_opts();
-
-	$base = YOURLS_SITE;
-	$key = iqrcodes_key();
-	
-	iqrcodes_mkdir( $opt[0] );
-
-	$filename = '/qrc_' . md5($shorturl) . "." . $opt[5];
- 	$filepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0]. '/' . $filename;
-
-	$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $filename;
-
-	$data['qrcimg'] = $imgname;
-
-	if ( !file_exists( $filepath ) && $shorturl == !null )
-		QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
-
-	// required for direct call to yourls_add_new_link() which does not fire the javascript - lets do it manually
-	$data['qrimage'] = "<script>iqrcodes('$imgname', '$base');</script>";
-        return $data;
-}
 
 //Generate QRCode for new url added.
 yourls_add_filter( 'add_new_link', 'iqrcodes_add_url' );
@@ -394,7 +368,6 @@ function iqrcodes_add_url( $data ) {
 						
 	return $data;
 }
-
 
 //Generate new QRCode when the shorturl is edited.
 yourls_add_filter ( 'pre_edit_link' , 'iqrcodes_edit_url' );
