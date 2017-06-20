@@ -30,8 +30,6 @@ if( $_POST['action'] == 'qrchk' ) {
 	$base = YOURLS_SITE;
 	$key = iqrcodes_key();
 	
-	iqrcodes_mkdir( $opt[0] );
-
 	$filename = '/qrc_' . md5($shorturl) . "." . $opt[5];
 	$filepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0]. '/' . $filename;
 
