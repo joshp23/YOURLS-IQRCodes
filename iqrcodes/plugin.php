@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.2.1
+Version: 1.3.0
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -22,6 +22,7 @@ function iqrcodes_add_page() {
 function iqrcodes_do_page() {
 	// Check if a form was submitted
 	iqrcodes_form_0();
+	iqrcodes_form_1();
 	
 	// Get the options and set defaults if needed
 	$opt = iqrcodes_get_opts();
@@ -75,6 +76,7 @@ function iqrcodes_do_page() {
 					<ul id="headers" class="toggle_display stat_tab">
 						<li class="selected"><a href="#stat_tab_options"><h2>IQRCodes Config</h2></a></li>
 						<li><a href="#stat_tab_examples"><h2>Display Examples</h2></a></li>
+						<li><a href="#stat_tab_qrchk"><h2>Mass QR Check</h2></a></li>
 					</ul>
 				</div>
 				<div id="stat_tab_options" class="tab">
@@ -245,6 +247,26 @@ function iqrcodes_do_page() {
 <pre>&#60;img src&#61;&#34;&#60;&#63;php if &#40;isset&#40;&#36;return&#91;&#39;qrimage&#39;&#93;&#41;&#41; echo &#36;return&#91;&#39;qrimage&#39;&#93;&#59; &#63;&#62;&#34; alt&#61;&#34;QRCode&#34;&#62;</pre>
 					</div>
 				</div>
+				<div id="stat_tab_qrchk" class="tab">
+					<form method="post" enctype="multipart/form-data">
+						<h3>Mass QR Code Generation</h3>
+						<div style="padding-left: 10pt;">
+							<p>IQRCodes can batch process your entire database at once and generate a QR Code for any short url that is found to be missing one. This is usefull if there were any urls added before the installation of this plugin.</p>
+							<p>This could be quite resource intensive and time consuming for larger databases. Alternatively, QR Codes are generated for old short urls whenever the sharebox is displayed.</p>
+							<div class="checkbox">
+							  <label>
+							    <input name="iqrcodes_mass_chk_do" type="hidden" value="no" >
+							    <input name="iqrcodes_mass_chk_do" type="checkbox" value="yes" > Run?
+							  </label>
+							</div>
+							<br>
+						</div>
+						<hr/>
+						<input type="hidden" name="nonce" value="$nonce" />
+						<p><input type="submit" value="Submit" /></p>
+					</form>
+				</div>
+
 			</div>
 		</div>
 
@@ -264,7 +286,7 @@ function iqrcodes_js() {
 	echo '<script src="/js/infos.js" type="text/javascript"></script>';
 }
 
-// form handler
+// form handlers
 function iqrcodes_form_0() {
 	if( isset( $_POST['iqrcodes_cache_loc'] ) ) {
 	
@@ -295,6 +317,15 @@ function iqrcodes_form_0() {
 			move_uploaded_file($_FILES['iqrcodes_logo_file']['tmp_name'], $_SERVER['DOCUMENT_ROOT']."/user/plugins/iqrcodes/logo.".$path_parts['extension']);
 		}
 	}
+}
+
+function iqrcodes_form_1() {
+
+	if(isset($_POST['iqrcodes_mass_chk_do'])) {
+		$do = $_POST['iqrcodes_mass_chk_do'];
+		if($do == "yes") iqrcodes_mass_chk();
+	}
+
 }
 
 // option handler
@@ -368,6 +399,7 @@ function iqrcodes_add_url( $data ) {
 						
 	return $data;
 }
+
 
 //Generate new QRCode when the shorturl is edited.
 yourls_add_filter ( 'pre_edit_link' , 'iqrcodes_edit_url' );
@@ -469,5 +501,43 @@ function iqrcodes_mvdir( $old , $new ) {
 		}
 		else
 			return;
+	}
+}
+
+// Mass QR Check function
+function iqrcodes_mass_chk() {
+
+	$opt = iqrcodes_get_opts();
+	$base = YOURLS_SITE;
+
+	global $ydb;
+	if( defined( 'YOURLS_DB_PREFIX' ) ) { 
+		$table = YOURLS_DB_PREFIX . 'url';
+	} else {
+		$table = 'url';
+	}
+
+	$all_keys = $ydb->get_results("SELECT * FROM `$table` ORDER BY timestamp DESC");
+
+	iqrcodes_mkdir( $opt[0] );
+
+	if($all_keys) {
+		$i = 0;
+		foreach( $all_keys as $a_key ) {
+			$alias = $a_key->keyword;
+			$shorturl = $base . '/' . $alias;
+			$filename = '/qrc_' . md5($shorturl) . "." . $opt[5];
+			$filepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0]. '/' . $filename;
+			if ( !file_exists( $filepath ) && $shorturl == !null ) {
+				QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+				$i++;
+			}
+		}
+	}
+
+	if( $i > 0 ) {
+		 echo '<p style="color:green;">Total QR Codes generated: ' . $i . '</p>';
+	} else {
+		echo '<p style="color:green;">No new QR Codes generated at this time.</p>';
 	}
 }
