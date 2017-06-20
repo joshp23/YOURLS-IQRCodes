@@ -8,8 +8,9 @@ function iqrcodes(url, site) {
 
 		$.ajax({
 			type: "POST",
-				url: base_url + '/qrchk',
-				data:{action:'qrchk', data: shorturl}
+			async: false,
+			url: base_url + '/qrchk',
+			data:{action:'qrchk', data: shorturl}
 		});
 
 		function getCookie(name) {
