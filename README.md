@@ -6,34 +6,34 @@ This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcod
 ## Features
 ### Old
 * QRCodes are generated and cached for every new short url
-* New QRCode is generated when the user edits the short url
-* Cached QRCode is deleted when the user deletes an url
-* Displays QRCode within the sharebox, whenever the sharebox is displayed
-* ~~QRCodes generated at 165 x 165 pixels.~~ __updated__
-* Codes are generated from standalone php QRCode library from Sourceforge.net
+* A new QRCode is generated when a short url is edited
+* Cached QRCodes are deleted when its corresponding short url is deleted
+* QRCodes are displayed within the sharebox whenever the sharebox is displayed
+* QRCodes are generated for pre-existing shorturls when sharebox is displayed
+* Codes are generated from a standalone php based QRCode library
   * No calls to google!
-* QRCodes can be generated for pre-existing shorturls by visiting stats page
 
 ### New
-* All options are available in the admin interface, no file editing
-* You can now generate codes of varying sizes, with varying degrees of ECC, and with varying border sizes
-* Image storage location is configurable to allow easier qrcode exposure to other modules
+* All options are available in the admin interface
+* Generate codes of varying sizes, with varying degrees of ECC, and with varying border sizes
+* Image storage location is configurable, allowing easier qrcode exposure to other modules
+* Code links are served using U-SRV, a secure system allowing greater integration
 * Auto-delete or preserve codes on plugin deactivation
-* Code links are served using a new secure system, U-SRV, that allows greater integration
 * Plenty of well documented, practical examples in the options page to help get started with integration
 * Updated and minimized md5.js
-* streamlined version of the QR Code generation library
-* almost half the total size in bytes
-  * This can be reduced in half yet again by disabling and deleting the PHP QR Code cache, which was left in for enhanced performance.This setting can be found on lnie 100 of `assets/phpqrcode.php`
+* Streamlined version of the QR Code generation library
+* Almost half the total size in bytes as its predecessor
+  * This can be reduced in half yet again by disabling and deleting the PHP QR Code cache, which was left in for enhanced performance. This setting can be found on lnie 100 of `assets/phpqrcode.php`
 * Select output image type
 * Include an optional logo file
   
 ## Installation
 1. Download this repo and extract the `iqrcodes` folder to `YOURLS/user/plugins/`
-2. Move `assets/srv.php` to `YOURLS/pages/`
-3. Set permissions
-4. Enable module, default config works fine, or visit IQRCodes page to fine tune.
-5. Have fun!
+2. Symlink `assets/srv.php` to `YOURLS/pages/srv.php`
+3. Symlink `assets/qrchk.php` to `YOURLS/pages/qrchk.php`
+4. Set permissions
+5. Enable module, default config works fine, or visit IQRCodes page to fine tune.
+6. Have fun!
 
 ## Credits
 [Inline QRcode](http://techlister.com/plugins-2/qrcode-plugin-for-yourls/354/) by Savoul Pelister is the base of this fork
@@ -41,9 +41,6 @@ This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcod
 [PHP QR Code](http://phpqrcode.sourceforge.net/) by Dominik Dzienia (aka deltalab) generates the actual QR Codes
 
 [JavaScript MD5](https://blueimp.github.io/JavaScript-MD5/) by Sebastian Tschan (aka BlueImp) hashes the filenames in js
-
-#### DISCLAIMER:
-* This plugin is offered "as is", and may or may not work for you. Give it a try, and have fun!
 
 ===========================
 
