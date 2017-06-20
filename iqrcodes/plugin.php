@@ -471,9 +471,3 @@ function iqrcodes_mvdir( $old , $new ) {
 			return;
 	}
 }
-
-function checkSelected($var="foo", $item="foo") {
-	if($var==$item) {
-		echo " selected=\"selected\"";
-	}
-}
