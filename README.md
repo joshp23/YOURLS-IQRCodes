@@ -15,18 +15,21 @@ This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcod
 
 ### New
 * All options are available in the admin interface
-* Generate codes of varying sizes, with varying degrees of ECC, and with varying border sizes
-* Image storage location is configurable, allowing easier qrcode exposure to other modules
-* Code links are served using U-SRV, a secure system allowing greater integration
-* Auto-delete or preserve codes on plugin deactivation
+  * Code size
+  * Border width
+  * ECC level
+  * Image file type
+  * Optional logo watermark
+  * Image cache location 
+  * Auto-delete or preserve cache on plugin deactivation
+* Scan the entire database at once and generate QR Codes for any short url that is found to be missing one
 * Plenty of well documented, practical examples in the options page to help get started with integration
+* Code links are served using U-SRV, a secure system allowing greater integration
 * Updated and minimized md5.js
 * Streamlined version of the QR Code generation library
-* Almost half the total size in bytes as its predecessor
-  * This can be reduced in half yet again by disabling and deleting the PHP QR Code cache, which was left in for enhanced performance. This setting can be found on lnie 100 of `assets/phpqrcode.php`
-* Select output image type
-* Include an optional logo file
-  
+* Almost 1/2 the size of its predecessor
+  * This can halfed again by disabling and deleting the PHP QR Code cache, which was left in for enhanced performance. This setting can be found on lnie 100 of `assets/phpqrcode.php`
+
 ## Installation
 1. Download this repo and extract the `iqrcodes` folder to `YOURLS/user/plugins/`
 2. Symlink `assets/srv.php` to `YOURLS/pages/srv.php`
