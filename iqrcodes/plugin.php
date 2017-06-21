@@ -392,7 +392,11 @@ function iqrcodes_add_url( $data ) {
 	
 	QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
 	
-	$data['html'] .= "<script>iqrcodes( '$imgname' , '$base' );</script>";
+	if ( isset( $data['html'] ) ) { 
+		$data['html'] .= "<script>iqrcodes( '$imgname' , '$base' );</script>";
+	} else {
+		$data['html'] = "<script>iqrcodes( '$imgname' , '$base' );</script>";
+	}
 	
 	// required for direct call to yourls_add_new_link() which does not fire the javascript - lets do it manually
 	$data['qrimage'] = "<script>iqrcodes( '$imgname' , '$base' );</script>";
