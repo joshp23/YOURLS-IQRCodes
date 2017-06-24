@@ -8,7 +8,6 @@ function iqrcodes(url, site) {
 
 		$.ajax({
 			type: "POST",
-			async: false,
 			url: base_url + '/qrchk',
 			data:{action:'qrchk', data: shorturl}
 		});
