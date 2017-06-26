@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.3.2
+Version: 1.4.0
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -51,230 +51,252 @@ function iqrcodes_do_page() {
 		default:  $H_chk = 'checked'; break;
 	}
 	
-	$imgtypeSelected = array("svg" => "", "png" => "", "jpg" => "");
+	$imgTSel = array("svg" => " ", "png" => " ", "jpg" => " ");
 	switch ($opt[5]) {
-		case 'svg':	$imgTypeSelected['svg'] = 'selected="selected"'; break;
-		case 'jpg':	$imgTypeSelected['jpg'] = 'selected="selected"'; break;
-		default:	$imgTypeSelected['png'] = 'selected="selected"'; $opt[5] = 'png'; break;
+		case 'svg': $imgTSel['svg'] = 'selected'; break;
+		case 'jpg': $imgTSel['jpg'] = 'selected'; break;
+		default:    $imgTSel['png'] = 'selected'; break;
 	}
 
-	$logoPositionSelected = array("center" => "", "topleft" => "", "topright" => "");
+	$logoPosSel = array("center" => "", "topleft" => "", "topright" => "");
 	switch ($opt[7]) {
-		case 'topleft':		$logoPositionSelected['topleft'] = 'selected="selected"'; break;
-		case 'topright':	$logoPositionSelected['topright'] = 'selected="selected"'; break;
-		default:		$logoPositionSelected['center'] = 'selected="selected"'; $opt[7] = 'center'; break;
+		case 'topleft':	 $logoPosSel['topleft']  = 'selected'; break;
+		case 'topright': $logoPosSel['topright'] = 'selected'; break;
+		default:	 $logoPosSel['center']   = 'selected'; break;
 	}
 
 	$base = YOURLS_SITE;
 	$key  = iqrcodes_key();
 	$fn = 'qrc_' . md5($base . '/V') . "." . $opt[5];
 
-	echo <<<HTML
-		<div id="wrap">
-			<div id="tabs">
-				<div class="wrap_unfloat">
-					<ul id="headers" class="toggle_display stat_tab">
-						<li class="selected"><a href="#stat_tab_options"><h2>IQRCodes Config</h2></a></li>
-						<li><a href="#stat_tab_examples"><h2>Display Examples</h2></a></li>
-						<li><a href="#stat_tab_qrchk"><h2>Mass QR Check</h2></a></li>
-					</ul>
-				</div>
-				<div id="stat_tab_options" class="tab">
-					<form method="post" enctype="multipart/form-data">
-						<h3>Cache Options</h3>
-						<h4>Image Cache Location</h4>
-						<div style="padding-left: 10pt;">
-							<p><input type="text" size=25 name="iqrcodes_cache_loc" value="$opt[0]" /></p>
-							<p>Please set the cache location, do not include a preceeding or trailing slash.</p>
-						</div>
+	$isLogo = glob ( $_SERVER['DOCUMENT_ROOT'].$opt[0]."/logo.*");
 
-						<h4>Cache Afterlife</h4>
-						<div style="padding-left: 10pt;">
-							<input type="hidden" name="iqrcodes_afterlife" value="preserve">
-		  					<input type="radio" name="iqrcodes_afterlife" value="preserve" $P_chk> Preserve<br>
-		  					<input type="radio" name="iqrcodes_afterlife" value="delete" $D_chk> Delete<br>
-		  					<p>Decide what happens to the cache when the plugin is deactivated</p>
-	  					</div>
+	if( isset($isLogo[1])) {
+		$logoIs = '<p style="color:red;">There is a problem with your setup, please use the reset option or re-upload your logo image file. If this does not fix the problem then you may have to check your cache location or folder permissions.</p>';
+	}
+	elseif( isset($isLogo[0])) {
+		$stamp  = filemtime($isLogo[0]);
+		$name   = basename($isLogo[0]).'?='.$stamp;
+		$logoIs = '<h4>Current Logo</h4><div style="width:128px;text-align:center"><img src="'.$base.'/'.$opt[0].'/'.$name.'" style="-webkit-filter:drop-shadow(5px 5px 5px #222); filter:drop-shadow(5px 5px 5px #222); max-width:128px;"><hr></div>';
+	}
+	else {
+		$logoIs = '<h4 style="color:blue">No logo on file</h4>';
+	}
 
-						<hr/>
-
-						<h3>QR Code Image Options</h3>
-						<h4>Image Type</h4>
-						<div style="padding-left: 10pt;">
-							<select name="iqrcodes_imagetype" size="1">
-								<option value="jpg" {$imgTypeSelected['jpg']}>JPG</option>
-								<option value="svg" {$imgTypeSelected['svg']}>SVG</option>
-								<option value="png" {$imgTypeSelected['png']}>PNG</option>
-							</select>
-						</div>
-
-						<h4>Error Correction Level</h4>
-						<div style="padding-left: 10pt;">
-							<input type="hidden" name="iqrcodes_EC" value="H">
-	   						<input type="radio" name="iqrcodes_EC" value="H" $H_chk> H: up to 30% damage<br>
-	    						<input type="radio" name="iqrcodes_EC" value="Q" $Q_chk> Q: up to 25% damage<br>
-	  						<input type="radio" name="iqrcodes_EC" value="M" $M_chk> M: up to 15% damage<br>
-	  						<input type="radio" name="iqrcodes_EC" value="L" $L_chk> L: up to 07% damage<br>
-
-	  						<p>How much damage can the codes take before they start losing data integrity?</p> 
-	  						<p>Note: The more damage that they can take, the larger the file size.</p>
-						</div>
-
-						<h4>Image Size</h4>
-
-						<div style="padding-left: 10pt;">
-							<input type="hidden" name="iqrcodes_img_size" value="5">
-		  					<input type="number" name="iqrcodes_img_size" min="1" max="10" value=$opt[2]><br>
-
-							<p>Set the pixel size for qr code image here.</p>
-							<p>Note:<p>
-
-							<div style="padding-left: 10pt;">
-								<p>A value of <code>5</code> will result in an image display of <code>165 x 165</code></p>
-								<p>A value of <code>10</code> will result in an image display of <code>330 x 330</code></p>
-							</div>
-						</div>
-
-						<h4>Image Silent Zone, aka Frame Size</h4>
-						<div style="padding-left: 10pt;">
-							<input type="hidden" name="iqrcodes_border_size" value="2">
-	  						<input type="number" name="iqrcodes_border_size" min="2" max="10" value=$opt[3]>
-
-							<p>Determine the size of the blank zone surrounding the codes.</p>
-							<p>Default is 2, if you run into problems try increasing this number to at least 4. Otherwise, propbably leave this alone.</p>
-						</div>
-						<hr/>
-						<h3>Logo</h3>
-						<p>Set scaling to 0 to ignore/deactivate a previous loaded logo.</p>
-						<h4>Upload</h4>
-						<div style="padding-left: 10pt;">
-							<input type="file" name="iqrcodes_logo_file" />
-						</div>
-
-						<h4>Scaling</h4>
-						<div style="padding-left: 10pt;">
-							<input type="text" name="iqrcodes_logo_scale" value="$opt[6]" />
-						</div>
-
-						<h4>Position</h4>
-						<div style="padding-left: 10pt;">
-							<select name="iqrcodes_logo_position" size="1">
-								<option value="center" {$logoPositionSelected['center']}>Center</option>
-								<option value="topleft" {$logoPositionSelected['topleft']}>Top left</option>
-								<option value="topright" {$logoPositionSelected['topright']}>Top right</option>
-							</select>
-						</div>
-
-						<input type="hidden" name="nonce" value="$nonce" />
-						<p><input type="submit" value="Submit" /></p>
-					</form>
-				</div>
-
-				<div id="stat_tab_examples" class="tab">
-				
-					<p>QR Codes will automatically appear in the share box and stats pages. You can expand on this and place the codes on your custom pages, or even call them remotely.</p>
-				
-					<h3>Code Publishing Via U-SRV link</h3>
-				
-					<p>You can use a simple GET request to retrieve a code from U-SRV at the following address:</p>
-				
+echo <<<HTML
+	<div id="wrap">
+		<div id="tabs">
+			<div class="wrap_unfloat">
+				<ul id="headers" class="toggle_display stat_tab">
+					<li class="selected"><a href="#stat_tab_options"><h2>IQRCodes Config</h2></a></li>
+					<li><a href="#stat_tab_examples"><h2>Display Examples</h2></a></li>
+					<li><a href="#stat_tab_qrchk"><h2>Mass QR Check</h2></a></li>
+				</ul>
+			</div>
+			<div id="stat_tab_options" class="tab">
+				<form method="post" enctype="multipart/form-data">
+					<h3>Cache Settings</h3>
+					<h4>Image Cache Location</h4>
 					<div style="padding-left: 10pt;">
-						<p><code>$base/srv/</code></p>
+						<p><input type="text" size=25 name="iqrcodes_cache_loc" value="$opt[0]" /></p>
+						<p>Please set the cache location, do not include a preceeding or trailing slash.</p>
 					</div>
-				
-					<p>With the following parameters:</p>
-				
-					<ul>
-						<li>id => 'iqrcodes'</li>
-						<li>key => &#36;key</li>
-						<li>fn => &#36;fn</li>
-					</ul>
-				
-					<h4>id</h4>
+
+					<h4>Cache Afterlife</h4>
 					<div style="padding-left: 10pt;">
-						<p>U-SRV uses this id to know where to look for the actual QRCode images. This should always be the same.</p>
+						<input type="hidden" name="iqrcodes_afterlife" value="preserve">
+	  					<input type="radio" name="iqrcodes_afterlife" value="preserve" $P_chk> Preserve<br>
+	  					<input type="radio" name="iqrcodes_afterlife" value="delete" $D_chk> Delete<br>
+	  					<p>Decide what happens to the cache when the plugin is deactivated</p>
+  					</div>
+
+					<hr/>
+
+					<h3>QR Code Image Settings</h3>
+					<h4>Image Type</h4>
+					<div style="padding-left: 10pt;">
+						<select name="iqrcodes_imagetype" size="1">
+							<option value="jpg" {$imgTSel['jpg']}>JPG</option>
+							<option value="svg" {$imgTSel['svg']}>SVG</option>
+							<option value="png" {$imgTSel['png']}>PNG</option>
+						</select>
 					</div>
-				
-					<h4>key</h4>
+
+					<h4>Error Correction Level</h4>
 					<div style="padding-left: 10pt;">
-						<p>A key is valid for, at most, one minute, and is determined by hashing a unique timestamp concatenated with the ID. The following PHP produces a valid key:</p>
-					
+						<input type="hidden" name="iqrcodes_EC" value="H">
+   						<input type="radio" name="iqrcodes_EC" value="H" $H_chk> H: up to 30% damage<br>
+    						<input type="radio" name="iqrcodes_EC" value="Q" $Q_chk> Q: up to 25% damage<br>
+  						<input type="radio" name="iqrcodes_EC" value="M" $M_chk> M: up to 15% damage<br>
+  						<input type="radio" name="iqrcodes_EC" value="L" $L_chk> L: up to 07% damage<br>
+
+  						<p>How much damage can the codes take before they start losing data integrity?</p> 
+  						<p>Note: The more damage that they can take, the larger the file size.</p>
+					</div>
+
+					<h4>Image Size</h4>
+
+					<div style="padding-left: 10pt;">
+						<input type="hidden" name="iqrcodes_img_size" value="5">
+	  					<input type="number" name="iqrcodes_img_size" min="1" max="10" value=$opt[2]><br>
+
+						<p>Set the pixel size for qr code image here.</p>
+						<p>Note:<p>
+
 						<div style="padding-left: 10pt;">
+							<p>A value of <code>5</code> will result in an image display of <code>165 x 165</code></p>
+							<p>A value of <code>10</code> will result in an image display of <code>330 x 330</code></p>
+						</div>
+					</div>
+
+					<h4>Image Silent Zone, aka Frame Size</h4>
+					<div style="padding-left: 10pt;">
+						<input type="hidden" name="iqrcodes_border_size" value="2">
+  						<input type="number" name="iqrcodes_border_size" min="2" max="10" value=$opt[3]>
+
+						<p>Determine the size of the blank zone surrounding the codes.</p>
+						<p>Default is 2, if you run into problems try increasing this number to at least 4. Otherwise, propbably leave this alone.</p>
+					</div>
+					<hr/>
+					<h3>Logo Settings</h3>
+					$logoIs
+					<h4>Upload Image</h4>
+					<div style="padding-left: 10pt;">
+						<input type="file" name="iqrcodes_logo_file" />
+					</div><p>Supported filetypes: jpg/png/svg</p>
+
+					<h4>Scaling</h4>
+					<div style="padding-left: 10pt;">
+						<input type="text" name="iqrcodes_logo_scale" value="$opt[6]" />
+					</div>
+
+					<h4>Position</h4>
+					<div style="padding-left: 10pt;">
+						<select name="iqrcodes_logo_position" size="1">
+							<option value="center" {$logoPosSel['center']}>Center</option>
+							<option value="topleft" {$logoPosSel['topleft']}>Top left</option>
+							<option value="topright" {$logoPosSel['topright']}>Top right</option>
+						</select>
+					</div>
+					<h4>Restore Deafualts</h4>
+					<p>Revert logo settings to default and delete the logo file.</p>
+					<div  style="padding-left: 10pt;" class="checkbox">
+		  				<label>
+							<input name="iqrcodesLogoReset" type="hidden" value="preserve" />
+							<input name="iqrcodesLogoReset" type="checkbox" value="reset" />Reset?
+						  </label>
+					</div>
+					<hr>
+					<input type="hidden" name="nonce" value="$nonce" />
+					<p><input type="submit" value="Submit" /></p>
+				</form>
+			</div>
+
+			<div id="stat_tab_examples" class="tab">
+			
+				<p>QR Codes will automatically appear in the share box and stats pages. You can expand on this and place the codes on your custom pages, or even call them remotely.</p>
+			
+				<h3>Code Publishing Via U-SRV link</h3>
+			
+				<p>You can use a simple GET request to retrieve a code from U-SRV at the following address:</p>
+			
+				<div style="padding-left: 10pt;">
+					<p><code>$base/srv/</code></p>
+				</div>
+			
+				<p>With the following parameters:</p>
+			
+				<ul>
+					<li>id => 'iqrcodes'</li>
+					<li>key => &#36;key</li>
+					<li>fn => &#36;fn</li>
+				</ul>
+			
+				<h4>id</h4>
+				<div style="padding-left: 10pt;">
+					<p>U-SRV uses this id to know where to look for the actual QRCode images. This should always be the same.</p>
+				</div>
+			
+				<h4>key</h4>
+				<div style="padding-left: 10pt;">
+					<p>A key is valid for, at most, one minute, and is determined by hashing a unique timestamp concatenated with the ID. The following PHP produces a valid key:</p>
+				
+					<div style="padding-left: 10pt;">
 <pre>
 &#36;now &#61; round&#40;time&#40;&#41;/60&#41;&#59;
 &#36;key &#61; md5&#40;&#36;now &#46; &#39;iqrcodes&#39;&#41;&#59;
 </pre>
-						</div>				
-						<p>Which gives the following live value:</p> 
-						<div style="padding-left: 10pt;">
-							<code>$key</code>
-						</div>
-					</div>
-				
-					<h4>fn</h4>
+					</div>				
+					<p>Which gives the following live value:</p> 
 					<div style="padding-left: 10pt;">
-						<p>The file name, determined by hashing the short url and prepending that with 'qrc_', can be accomplished with the follwoing PHP:</p>
-						<div style="padding-left: 10pt;">				
+						<code>$key</code>
+					</div>
+				</div>
+			
+				<h4>fn</h4>
+				<div style="padding-left: 10pt;">
+					<p>The file name, determined by hashing the short url and prepending that with 'qrc_', can be accomplished with the follwoing PHP:</p>
+					<div style="padding-left: 10pt;">				
 <pre>&#36;fn &#61; &#39;qrc_&#39; &#46; md5&#40;$base&#47;&#36;var&#41; &#46; &#39;&#46;png&#39;&#59;</pre>
-						</div>
-						<p>If &#36;var &#61; &#39;V&#39;, the filename is:
-						<div style="padding-left: 10pt;">					
-							<code>$fn</code>.</p>
-						</div>
 					</div>
-				
-					<br>
+					<p>If &#36;var &#61; &#39;V&#39;, the filename is:
+					<div style="padding-left: 10pt;">					
+						<code>$fn</code>.</p>
+					</div>
+				</div>
+			
+				<br>
 
-					<p>In the context of a PHP file, the following code will utilize the values from above and fetch a QR Code:</p>
-				
-					<div style="padding-left: 10pt;">
+				<p>In the context of a PHP file, the following code will utilize the values from above and fetch a QR Code:</p>
+			
+				<div style="padding-left: 10pt;">
 <pre>&#60;img src&#61;&#34;$base&#47;srv&#47;&#63;id&#61;iqrcodes&#38;key&#61;<strong>&#36;key</strong>&#38;fn&#61;<strong>&#36;fn</strong>&#34; &#47;&#62;</pre>
-					</div>
-				
-					<hr>
-				
-					<h3>Local only Javascript/PHP</h3>
-				
-					<p>QR Codes can be called locally via IQRCodes's javascript functions. Try putting something like the following in your public index.php file. This would be at line 67 in the <code>sample-public-front-page.txt</code> file in the YOURLS root:</p>
-				
-					<div style="padding-left: 10pt;">									
+				</div>
+			
+				<hr>
+			
+				<h3>Local only Javascript/PHP</h3>
+			
+				<p>QR Codes can be called locally via IQRCodes's javascript functions. Try putting something like the following in your public index.php file. This would be at line 67 in the <code>sample-public-front-page.txt</code> file in the YOURLS root:</p>
+			
+				<div style="padding-left: 10pt;">									
 <pre>&#60;&#63;php if &#40;isset&#40;&#36;return&#91;&#39;qrimage&#39;&#93;&#41;&#41; echo &#36;return&#91;&#39;qrimage&#39;&#93;&#59; &#63;&#62;</pre>
-		        		</div>
-		        			
-		       			<p>Or try the following example:</p>
-		       			
-					<div style="padding-left: 10pt;">					           			
+	        		</div>
+	        			
+	       			<p>Or try the following example:</p>
+	       			
+				<div style="padding-left: 10pt;">					           			
 <pre>&#60;img src&#61;&#34;&#60;&#63;php if &#40;isset&#40;&#36;return&#91;&#39;qrimage&#39;&#93;&#41;&#41; echo &#36;return&#91;&#39;qrimage&#39;&#93;&#59; &#63;&#62;&#34; alt&#61;&#34;QRCode&#34;&#62;</pre>
-					</div>
 				</div>
-				<div id="stat_tab_qrchk" class="tab">
-					<form method="post" enctype="multipart/form-data">
-						<h3>Mass QR Code Generation</h3>
-						<div style="padding-left: 10pt;">
-							<p>IQRCodes can batch process your entire database at once and generate a QR Code for any short url that is found to be missing one. This is usefull if there were any urls added before the installation of this plugin.</p>
-							<p>This could be quite resource intensive and time consuming for larger databases. Alternatively, QR Codes are generated for old short urls whenever the sharebox is displayed.</p>
-							<div class="checkbox">
-							  <label>
-							    <input name="iqrcodes_mass_chk_do" type="hidden" value="no" >
-							    <input name="iqrcodes_mass_chk_do" type="checkbox" value="yes" > Run?
-							  </label>
-							</div>
-							<br>
-						</div>
-						<hr/>
-						<input type="hidden" name="nonce" value="$nonce" />
-						<p><input type="submit" value="Submit" /></p>
-					</form>
-				</div>
-
 			</div>
+			<div id="stat_tab_qrchk" class="tab">
+				<form method="post" enctype="multipart/form-data">
+					<h3>Mass QR Code Generation</h3>
+					<div style="padding-left: 10pt;">
+						<p>IQRCodes can batch process your entire database at once and generate a QR Code for any short url that is found to be missing one. This is usefull if there were any urls added before the installation of this plugin.</p>
+						<p>This could be quite resource intensive and time consuming for larger databases. Alternatively, QR Codes are generated for old short urls whenever the sharebox is displayed.</p>
+						<div class="checkbox">
+						  <label>
+						    <input name="iqrcodes_mass_chk_do" type="hidden" value="no" >
+						    <input name="iqrcodes_mass_chk_do" type="checkbox" value="yes" > Run?
+						  </label>
+						</div>
+						<br>
+					</div>
+					<hr/>
+					<input type="hidden" name="nonce" value="$nonce" />
+					<p><input type="submit" value="Submit" /></p>
+				</form>
+			</div>
+
 		</div>
+	</div>
 
 HTML;
 
 }
 
-//insert the JS and CSS files to head.
+//insert the JS and CSS files to head
 yourls_add_action( 'html_head', 'iqrcodes_js' );
 function iqrcodes_js() {
 	$opt = iqrcodes_get_opts();
@@ -288,33 +310,45 @@ function iqrcodes_js() {
 
 // form handlers
 function iqrcodes_form_0() {
-	if( isset( $_POST['iqrcodes_cache_loc'] ) ) {
-	
+	// check for POST: if one is set, they all are
+	if(isset($_POST['iqrcodes_cache_loc'])) {
+
 		yourls_verify_nonce( 'iqrcodes' );
-		
+
+		// cache check, set, and update
 		$pcloc = $_POST['iqrcodes_cache_loc'];
 		$ocloc = yourls_get_option( 'iqrcodes_cache_loc' );
-		
+
 		if ($pcloc !== $ocloc ) {
 			if ($ocloc == null ) {
 				iqrcodes_mkdir( $pcloc );
 				yourls_update_option( 'iqrcodes_cache_loc', $pcloc);
 			} else {
-			iqrcodes_mvdir( $ocloc , $pcloc );
-			yourls_update_option( 'iqrcodes_cache_loc', $pcloc );
+				iqrcodes_mvdir( $ocloc , $pcloc );
+				yourls_update_option( 'iqrcodes_cache_loc', $pcloc );
 			}
 		}
-		
-		if(isset($_POST['iqrcodes_EC'])) yourls_update_option( 'iqrcodes_EC', $_POST['iqrcodes_EC'] );
-		if(isset($_POST['iqrcodes_img_size'])) yourls_update_option( 'iqrcodes_img_size', $_POST['iqrcodes_img_size'] );
-		if(isset($_POST['iqrcodes_border_size'])) yourls_update_option( 'iqrcodes_border_size', $_POST['iqrcodes_border_size'] );
-		if(isset($_POST['iqrcodes_afterlife'])) yourls_update_option( 'iqrcodes_afterlife', $_POST['iqrcodes_afterlife'] );
-		if(isset($_POST['iqrcodes_imagetype'])) yourls_update_option( 'iqrcodes_imagetype', $_POST['iqrcodes_imagetype'] );
-		if(isset($_POST['iqrcodes_logo_scale'])) yourls_update_option( 'iqrcodes_logo_scale', $_POST['iqrcodes_logo_scale'] );
-		if(isset($_POST['iqrcodes_logo_position'])) yourls_update_option( 'iqrcodes_logo_position', $_POST['iqrcodes_logo_position'] );
-		if(isset($_FILES['iqrcodes_logo_file'])&& in_array($_FILES['iqrcodes_logo_file']['type'], array("image/jpeg", "image/svg+xml", "image/png"))) {
-			$path_parts = pathinfo($_FILES['iqrcodes_logo_file']['name']);
-			move_uploaded_file($_FILES['iqrcodes_logo_file']['tmp_name'], $_SERVER['DOCUMENT_ROOT']."/user/plugins/iqrcodes/logo.".$path_parts['extension']);
+
+		// standard option updates
+		yourls_update_option('iqrcodes_EC', $_POST['iqrcodes_EC']);
+		yourls_update_option('iqrcodes_img_size', $_POST['iqrcodes_img_size']);
+		yourls_update_option('iqrcodes_border_size', $_POST['iqrcodes_border_size']);
+		yourls_update_option('iqrcodes_afterlife', $_POST['iqrcodes_afterlife']);
+		yourls_update_option('iqrcodes_imagetype', $_POST['iqrcodes_imagetype']);
+
+		// logo settings: hard reset of all values included due to bugginess
+		if($_POST['iqrcodesLogoReset'] == 'reset' ) {
+			yourls_delete_option('iqrcodes_logo_scale');
+			yourls_delete_option('iqrcodes_logo_position');
+			iqrcodes_logo_mgr($pcloc, 'no');
+		}
+		elseif($_POST['iqrcodesLogoReset'] == 'preserve' ) {
+			yourls_update_option('iqrcodes_logo_scale', $_POST['iqrcodes_logo_scale']);
+			yourls_update_option('iqrcodes_logo_position', $_POST['iqrcodes_logo_position']);
+
+			if(isset($_FILES['iqrcodes_logo_file']) 
+			&& in_array($_FILES['iqrcodes_logo_file']['type'], array("image/jpeg", "image/svg+xml", "image/png"))) 
+				iqrcodes_logo_mgr($pcloc, $_FILES['iqrcodes_logo_file']);
 		}
 	}
 }
@@ -339,28 +373,28 @@ function iqrcodes_get_opts() {
 	$afterlife	= yourls_get_option('iqrcodes_afterlife');
 	$imagetype	= yourls_get_option('iqrcodes_imagetype');
 	$logo_scale	= yourls_get_option('iqrcodes_logo_scale');
-	$logo_position	= yourls_get_option('iqrcodes_logo_position');
+	$logo_pos	= yourls_get_option('iqrcodes_logo_position');
 	
 	// Set defaults
-	if ($QRC_DIR 	== null) $QRC_DIR   = 'user/cache/qr';
-	if ($EC 	== null) $EC_LVL    = 'H';
-	if ($img_size 	== null) $img_size  = '5';			// 165 X 165 (10 = 330 X 330)
-	if ($bdr_size 	== null) $bdr_size  = '2';
-	if ($afterlife  == null) $afterlife = 'preserve';
-	if ($imagetype	== null) $imagetype = 'png';
-	if ($logo_scale	== null) $logo_scale = '0.25';
-	if ($logo_position== null) $logo_position = 'center';
+	if ($QRC_DIR 	== null) $QRC_DIR	= 'user/cache/qr';
+	if ($EC 	== null) $EC_LVL 	= 'H';
+	if ($img_size 	== null) $img_size 	= '5';			// 165 X 165 (10 = 330 X 330)
+	if ($bdr_size 	== null) $bdr_size 	= '2';
+	if ($afterlife  == null) $afterlife	= 'preserve';
+	if ($imagetype	== null) $imagetype 	= 'png';
+	if ($logo_scale	== null) $logo_scale 	= '0.25';
+	if ($logo_pos 	== null) $logo_pos 	= 'center';
 	
 	// Return values
 	return array(
-		$QRC_DIR,						// opt[0]
-		$EC,							// opt[1]
-		$img_size,						// opt[2]
-		$bdr_size,						// opt[3]
-		$afterlife,						// opt[4]
-		$imagetype,						// opt[5]
-		$logo_scale,						// opt[6]
-		$logo_position,						// opt[7]
+		$QRC_DIR,	// opt[0]
+		$EC,		// opt[1]
+		$img_size,	// opt[2]
+		$bdr_size,	// opt[3]
+		$afterlife,	// opt[4]
+		$imagetype,	// opt[5]
+		$logo_scale,	// opt[6]
+		$logo_pos,	// opt[7]
 	);
 }
 
@@ -417,13 +451,13 @@ function iqrcodes_edit_url( $data ) {
 	
         $base = YOURLS_SITE;
 
-	$oldfilepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0] . 'qrc_' . md5($base . '/' . $oldkeyword) . "." . $opt[5];
+	$oldfilepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0] . '/' . 'qrc_' . md5($base . '/' . $oldkeyword) . "." . $opt[5];
 	
 	if ( file_exists( $oldfilepath ))
 		unlink( $oldfilepath );
 	
 	$newfilename = 'qrc_' . md5($base . '/' . $newkeyword) . "." . $opt[5];
-	$newfilepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0] . $newfilename;
+	$newfilepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0] . '/' . $newfilename;
 	
         $key  = iqrcodes_key();
 	$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $newfilename;
@@ -505,6 +539,20 @@ function iqrcodes_mvdir( $old , $new ) {
 		}
 		else
 			return;
+	}
+}
+
+// logo file manager
+function iqrcodes_logo_mgr( $cache, $isNewLogo ) {
+	// remove old logo(s)
+	foreach (glob ( $_SERVER['DOCUMENT_ROOT'].$cache."/logo.*") as $oldLogo) {
+
+		if ( file_exists( $oldLogo ))
+			unlink( $oldLogo );
+	}
+	if( $isNewLogo !== 'no' ) {
+		$path_parts = pathinfo($isNewLogo['name']);
+		move_uploaded_file($isNewLogo['tmp_name'], $_SERVER['DOCUMENT_ROOT']."/".$cache."/logo.".$path_parts['extension']);
 	}
 }
 
