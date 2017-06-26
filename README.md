@@ -19,7 +19,7 @@ This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcod
   * Border width
   * ECC level
   * Image file type
-  * Optional logo watermark
+  * Optional logo watermark (image preview, scale, location on QR Code)
   * Image cache location 
   * Auto-delete or preserve cache on plugin deactivation
 * Scan the entire database at once and generate QR Codes for any short url that is found to be missing one
@@ -47,7 +47,7 @@ This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcod
 
 ===========================
 
-    Copyright (C) 2016 Josh Panter
+    Copyright (C) 2016 - 2017 Josh Panter
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
