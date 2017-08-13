@@ -2,7 +2,7 @@
 /*	
  *	=======================================================================
  *
- *	U-SRV v 1.1.9
+ *	U-SRV v 1.1.10
  *		
  *	This is a universal file server (for YOURLS)
  *	by Josh Panter <joshu at unfettered dot net>
@@ -38,7 +38,6 @@
  *      =======================================================================
  *
  * 	U-SRV is distributed under LGPL 3
- * 	Copyright (C) 2010 Dominik Dzienia <deltalab at poczta dot fm>
  *
  * 	This library is free software; you can redistribute it and/or
  * 	modify it under the terms of the GNU Lesser General Public
@@ -128,18 +127,18 @@ switch ($id) {
 	case 'snapshot':
 		$path = yourls_get_option('snapshot_cache_path');
 		if($path == null) $path = 'user/cache/preview';
-		$path = $_SERVER['DOCUMENT_ROOT'] . '/' . $path;
+		$path = YOURLS_ABSPATH . '/' . $path;
 		break;
 		
 	case 'snapshot-alt':
 		$path = 'user/plugins/snapshot/assets';
-		$path = $_SERVER['DOCUMENT_ROOT'] . '/' . $path;
+		$path = YOURLS_ABSPATH . '/' . $path;
 		break;
 		
 	case 'iqrcodes':
 		$path = yourls_get_option('iqrcodes_cache_loc');
 		if($path == null) $path = 'user/cache/qr';
-		$path = $_SERVER['DOCUMENT_ROOT'] . '/' . $path;
+		$path = YOURLS_ABSPATH . '/' . $path;
 		break;
 		
 	default:
