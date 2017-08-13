@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.4.2
+Version: 1.4.3
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -69,7 +69,7 @@ function iqrcodes_do_page() {
 	$key  = iqrcodes_key();
 	$fn = 'qrc_' . md5($base . '/V') . "." . $opt[5];
 
-	$isLogo = glob ( $_SERVER['DOCUMENT_ROOT'].$opt[0]."/logo.*");
+	$isLogo = glob ( YOURLS_ABSPATH."/".$opt[0]."/logo.*");
 
 	if( isset($isLogo[1])) {
 		$logoIs = '<p style="color:red;">There is a problem with your setup, please use the reset option or re-upload your logo image file. If this does not fix the problem then you may have to check your cache location or folder permissions.</p>';
@@ -418,7 +418,7 @@ function iqrcodes_add_url( $data ) {
 	iqrcodes_mkdir( $opt[0] );
 
 	$filename = 'qrc_'. md5($shorturl) . "." . $opt[5];
-	$filepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0]. '/' . $filename;
+	$filepath = YOURLS_ABSPATH . '/' . $opt[0]. '/' . $filename;
 	
 	$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $filename;
 	
@@ -434,11 +434,7 @@ function iqrcodes_add_url( $data ) {
 			$data['html'] = "<script>iqrcodes( '$imgname' , '$base' );</script>";
 		}
 	
-	}		
-	
-	// required for direct call to yourls_add_new_link() which does not fire the javascript - lets do it manually
-	$data['qrimage'] = "<script>iqrcodes( '$imgname' , '$base' );</script>";
-						
+	}			
 	return $data;
 }
 
@@ -455,13 +451,13 @@ function iqrcodes_edit_url( $data ) {
 	
         $base = YOURLS_SITE;
 
-	$oldfilepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0] . '/' . 'qrc_' . md5($base . '/' . $oldkeyword) . "." . $opt[5];
+	$oldfilepath = YOURLS_ABSPATH . '/' . $opt[0] . '/' . 'qrc_' . md5($base . '/' . $oldkeyword) . "." . $opt[5];
 	
 	if ( file_exists( $oldfilepath ))
 		unlink( $oldfilepath );
 	
 	$newfilename = 'qrc_' . md5($base . '/' . $newkeyword) . "." . $opt[5];
-	$newfilepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0] . '/' . $newfilename;
+	$newfilepath = YOURLS_ABSPATH . '/' . $opt[0] . '/' . $newfilename;
 	
         $key  = iqrcodes_key();
 	$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $newfilename;
@@ -481,7 +477,7 @@ function iqrcodes_delete_url( $data ) {
         $opt  = iqrcodes_get_opts();
 	
 	$filename = 'qrc_' . md5(YOURLS_SITE . '/' . $keyword) . "." . $opt[5];
-	$filepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0]. '/' . $filename;
+	$filepath = YOURLS_ABSPATH . '/' . $opt[0]. '/' . $filename;
 
 	if ( file_exists( $filepath ))
 		unlink( $filepath );		
@@ -502,7 +498,7 @@ yourls_add_action('deactivated_iqrcodes/plugin.php', 'iqrcodes_deactivate');
 function iqrcodes_deactivate() {
 
 	$opt = iqrcodes_get_opts();
-	$dir = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0] . '/';
+	$dir = YOURLS_ABSPATH . '/' . $opt[0] . '/';
 	
 	if($opt[4] == 'delete') {
 		if (file_exists($dir)) {
@@ -519,7 +515,7 @@ function iqrcodes_deactivate() {
 // Make dir if null
 function iqrcodes_mkdir( $new ) {	
 
-	$new = $_SERVER['DOCUMENT_ROOT'] . '/' . $new . '/';
+	$new = YOURLS_ABSPATH . '/' . $new . '/';
 	if ( !file_exists( $new ) ) {
 		mkdir( $new );
 		chmod( $new, 0777 );
@@ -531,8 +527,8 @@ function iqrcodes_mkdir( $new ) {
 // Move directory if option is updated
 function iqrcodes_mvdir( $old , $new ) {
 
-	$old = $_SERVER['DOCUMENT_ROOT'] . '/' . $old . '/';
-	$new = $_SERVER['DOCUMENT_ROOT'] . '/' . $new . '/';
+	$old = YOURLS_ABSPATH . '/' . $old . '/';
+	$new = YOURLS_ABSPATH . '/' . $new . '/';
 	
 	if ( !file_exists( $old ) || $old == null ) {
 		iqrcodes_mkdir( $new );
@@ -549,14 +545,14 @@ function iqrcodes_mvdir( $old , $new ) {
 // logo file manager
 function iqrcodes_logo_mgr( $cache, $isNewLogo ) {
 	// remove old logo(s)
-	foreach (glob ( $_SERVER['DOCUMENT_ROOT'].$cache."/logo.*") as $oldLogo) {
+	foreach (glob ( YOURLS_ABSPATH."/".$cache."/logo.*") as $oldLogo) {
 
 		if ( file_exists( $oldLogo ))
 			unlink( $oldLogo );
 	}
 	if( $isNewLogo !== 'no' ) {
 		$path_parts = pathinfo($isNewLogo['name']);
-		move_uploaded_file($isNewLogo['tmp_name'], $_SERVER['DOCUMENT_ROOT']."/".$cache."/logo.".$path_parts['extension']);
+		move_uploaded_file($isNewLogo['tmp_name'], YOURLS_ABSPATH."/".$cache."/logo.".$path_parts['extension']);
 	}
 }
 
@@ -583,7 +579,7 @@ function iqrcodes_mass_chk() {
 			$alias = $a_key->keyword;
 			$shorturl = $base . '/' . $alias;
 			$filename = '/qrc_' . md5($shorturl) . "." . $opt[5];
-			$filepath = $_SERVER['DOCUMENT_ROOT'] . '/' . $opt[0]. '/' . $filename;
+			$filepath = YOURLS_ABSPATH . '/' . $opt[0]. '/' . $filename;
 			if ( !file_exists( $filepath ) && $shorturl == !null ) {
 				QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
 				$i++;
