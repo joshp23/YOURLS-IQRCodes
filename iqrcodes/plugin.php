@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.4.4
+Version: 1.4.5
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
