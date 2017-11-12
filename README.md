@@ -34,7 +34,7 @@ This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcod
 1. Download the [latest release](https://github.com/joshp23/YOURLS-IQRCodes/releases/latest) of this repo and extract the `iqrcodes` folder to `YOURLS/user/plugins/`
 	- the following commands are run from `YOURLS` root folder. Eg, `/absolute/path/to/YOURLS`
 2. Symlink `srv.php` and `qrchk.php` into the `pages` folder
-	- `ln -s user/plugins/iqrcodes/assets/U-SRV/srv.php pages/qrchk.php`
+	- `ln -s user/plugins/iqrcodes/assets/U-SRV/srv.php pages/srv.php`
 	- `ln -s user/plugins/iqrcodes/assets/assets/qrchk.php pages/qrchk.php`
 3. Set permissions and cache
     -  There needs to be two folders called cache (from YOURLS root)
