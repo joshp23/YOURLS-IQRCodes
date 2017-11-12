@@ -62,9 +62,15 @@ To add a new filetype, just add a new case to the Mime Types section of `srv.php
 * In order to allow the passing of a `tar.gz` file, add the following:
 		- 'case "gz": $ctype="application/x-gzip"; break;`
 
-### NOTES:
+### Use NOTES:
 * U-SRV is pre-configured for the default filetypes used by the YOURLS [IQRCodes](https://github.com/joshp23/YOURLS-IQRCodes) and [Snapshot Visual Preview](https://github.com/joshp23/YOURLS-Snapshot) plugins. 
 * As should be obviouse, this script can be easily modified for use outside of the YOURLS environment.
+
+## Plugins using this script
+* [YOURLS-Snapshot](https://github.com/joshp23/YOURLS-Snapshot) - To serve images
+* [YOURLS-IQRCodes](https://github.com/joshp23/YOURLS-IQRCodes) - To serve code images
+* [YOURLS-Compliance](https://github.com/joshp23/YOURLS-Compliance) - To retrieve Snapshot images
+* [YOURLS-rscrub](https://github.com/joshp23/YOURLS-rscrub) - To retrieve Snapshot images
 
 ===========================
 
