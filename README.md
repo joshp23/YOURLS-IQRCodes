@@ -31,10 +31,12 @@ This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcod
   * This can halfed again by disabling and deleting the PHP QR Code cache, which was left in for enhanced performance. This setting can be found on lnie 100 of `assets/phpqrcode.php`
 
 ## Installation (Under Apache)
-1. Download this repo and extract the `iqrcodes` folder to `YOURLS/user/plugins/`
-2. Symlink `assets/srv.php` to `YOURLS/pages/srv.php`
-3. Symlink `assets/qrchk.php` to `YOURLS/pages/qrchk.php`
-4. Set permissions and cache
+1. Download the [latest release](https://github.com/joshp23/YOURLS-IQRCodes/releases/latest) of this repo and extract the `iqrcodes` folder to `YOURLS/user/plugins/`
+	- the following commands are run from `YOURLS` root folder. Eg, `/absolute/path/to/YOURLS`
+2. Symlink `srv.php` and `qrchk.php` into the `pages` folder
+	- `ln -s user/plugins/iqrcodes/assets/U-SRV/srv.php pages/qrchk.php`
+	- `ln -s user/plugins/iqrcodes/assets/assets/qrchk.php pages/qrchk.php`
+3. Set permissions and cache
     -  There needs to be two folders called cache (from YOURLS root)
        -  `user/plugins/iqrcodes/cache`   
        included with the plugin download
@@ -47,8 +49,8 @@ This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcod
       -  `chown -R www-data:www-data user/cache`
       -  `chown -R www-data:www-data user/plugins/iqrcodes`
       -  `chmod -R 777 user/cache`
-5. Enable module, default config works fine, or visit IQRCodes page to fine tune.
-6. Have fun!
+4. Enable module, default config works fine, or visit IQRCodes page to fine tune.
+5. Have fun!
 
 ### Note: 
 If you are using YOURLS with Nginx and using [this](https://github.com/YOURLS/YOURLS/wiki/Nginx-configuration) directive, you may end up with [404's instead of images](https://github.com/joshp23/YOURLS-IQRCodes/issues/21#issuecomment-326797121). You may want to have a look at [this](https://github.com/YOURLS/YOURLS/issues/1715#issuecomment-326797015) comment and thread. 
