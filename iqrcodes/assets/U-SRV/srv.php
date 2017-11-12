@@ -1,6 +1,6 @@
 <?php
 /*	
- *	U-SRV v 1.1.11
+ *	U-SRV v 1.2.1
  *		
  *	This is a universal file server (for YOURLS)
  *	by Josh Panter <joshu at unfettered dot net>
@@ -24,6 +24,8 @@ if( isset($_GET['id'])) {
 // get file name or die
 if( isset($_GET['fn'])) {
 	$fn = $_GET['fn'];
+	// strip path traversal characters - security
+	$fn = preg_replace('/^((\.*)(\/*))*/', '', $fn);
 } else {
 	die('FAIL: missing filename');
 }
@@ -89,10 +91,15 @@ switch ($id) {
 // work with the file
 $file = $path . '/' . $fn;
 
+// Compare result path to conf path - 2nd security check for path traversal
+$loc = pathinfo($file, PATHINFO_DIRNAME);
+if( $loc != $path ) die('FAIL: malformed request');
+
+// verify file
 if (is_file($file)) {							// if the file exists at this location
 	$type = pathinfo($fn, PATHINFO_EXTENSION);	// then get the file extention type
 } else {
-	die('file not found');						// or die
+	die('FAIL: file not found');				// or die
 }
 /*
  *  Mime Types
@@ -105,14 +112,21 @@ if (is_file($file)) {							// if the file exists at this location
  *
 */
 switch( $type ) {
-	case "jpg": $ctype="image/jpeg"; 	break;
-	case "png": $ctype="image/png"; 	break;
-	case "svg": $ctype="image/svg+xml"; break;
-	// The defualt case: nothing
-	default: break;
+	case "jpg": 
+		$ctype="image/jpeg";
+		break;
+	case "png": 
+		$ctype="image/png";
+		break;
+	case "svg": 
+		$ctype="image/svg+xml";
+		break;
+	default: 
+		$ctype="pronk";
+		break;
 }
 
-if($ctype == null) die('file type not supported, please check your configuration');
+if($ctype == "pronk") die('file type not supported, please check your configuration');
 
 header('Content-type: ' . $ctype);					// send the correct headers
 header('Expires: 0');								// .
