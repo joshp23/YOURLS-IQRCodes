@@ -22,7 +22,7 @@ This script will:
 
 ### Parameters
 To be sent as a `GET` request. All parameters are required.
-		- 	eg. `https://sho.rt/srv/?id=ID_VALUE&key=KEY_VALUE&fn=FILE_NAME_VALUE;
+		- 	eg. `https://sho.rt/srv/?id=ID_VALUE&key=KEY_VALUE&fn=FILE_NAME_VALUE`
 
 #### Access Key
 The url's created with this script live for a maximum of 1 minute. This helps prevent unwanted hotlinking, etc.  
