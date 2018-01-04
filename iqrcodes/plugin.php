@@ -260,13 +260,13 @@ echo <<<HTML
 				<p>QR Codes can be called locally via IQRCodes's javascript functions. Try putting something like the following in your public index.php file. This would be at line 67 in the <code>sample-public-front-page.txt</code> file in the YOURLS root:</p>
 			
 				<div style="padding-left: 10pt;">									
-<pre>&#60;&#63;php if &#40;isset&#40;&#36;return&#91;&#39;qrimage&#39;&#93;&#41;&#41; echo &#36;return&#91;&#39;qrimage&#39;&#93;&#59; &#63;&#62;</pre>
+<pre>&#60;&#63;php if &#40;isset&#40;&#36;return&#91;&#39;qrcimg&#39;&#93;&#41;&#41; echo &#36;return&#91;&#39;qrcimg&#39;&#93;&#59; &#63;&#62;</pre>
 	        		</div>
 	        			
 	       			<p>Or try the following example:</p>
 	       			
 				<div style="padding-left: 10pt;">					           			
-<pre>&#60;img src&#61;&#34;&#60;&#63;php if &#40;isset&#40;&#36;return&#91;&#39;qrimage&#39;&#93;&#41;&#41; echo &#36;return&#91;&#39;qrimage&#39;&#93;&#59; &#63;&#62;&#34; alt&#61;&#34;QRCode&#34;&#62;</pre>
+<pre>&#60;img src&#61;&#34;&#60;&#63;php if &#40;isset&#40;&#36;return&#91;&#39;qrcimg&#39;&#93;&#41;&#41; echo &#36;return&#91;&#39;qrcimg&#39;&#93;&#59; &#63;&#62;&#34; alt&#61;&#34;QRCode&#34;&#62;</pre>
 				</div>
 			</div>
 			<div id="stat_tab_qrchk" class="tab">
