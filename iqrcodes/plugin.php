@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.4.8
+Version: 1.4.9
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -300,12 +300,14 @@ HTML;
 yourls_add_action( 'html_head', 'iqrcodes_js' );
 function iqrcodes_js() {
 	$opt = iqrcodes_get_opts();
-	echo "<script type=\"text/javascript\">var iqrcodes_imagetype=\"".$opt[5]."\";</script>" ;
-	echo "<script src=\"". yourls_plugin_url( dirname( __FILE__ ) ). "/assets/md5.min.js\" type=\"text/javascript\"></script>" ;
-	echo "<script src=\"". yourls_plugin_url( dirname( __FILE__ ) ). "/assets/iqrcodes.js\" type=\"text/javascript\"></script>" ;
-	echo "<link rel=\"stylesheet\" href=\"". yourls_plugin_url( dirname( __FILE__ ) ) . "/assets/iqrcodes.css\" type=\"text/css\" />";
-	echo '<link rel="stylesheet" href="/css/infos.css" type="text/css" media="screen" />';
-	echo '<script src="/js/infos.js" type="text/javascript"></script>';
+	echo "\n<! --------------------------IQRCodes Start-------------------------- >\n";
+	echo "<script type=\"text/javascript\">var iqrcodes_imagetype=\"".$opt[5]."\";</script>\n";
+	echo "<script src=\"". yourls_plugin_url( dirname( __FILE__ ) ). "/assets/md5.min.js\" type=\"text/javascript\"></script>\n" ;
+	echo "<script src=\"". yourls_plugin_url( dirname( __FILE__ ) ). "/assets/iqrcodes.js\" type=\"text/javascript\"></script>\n" ;
+	echo "<link rel=\"stylesheet\" href=\"". yourls_plugin_url( dirname( __FILE__ ) ) . "/assets/iqrcodes.css\" type=\"text/css\" />\n";
+	echo "<link rel=\"stylesheet\" href=\"/css/infos.css\" type=\"text/css\" media=\"screen\" />\n";
+	echo "<script src=\"/js/infos.js\" type=\"text/javascript\"></script>\n";
+	echo "<! --------------------------IQRCodes END---------------------------- >\n";
 }
 
 // form handlers
