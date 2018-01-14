@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.4.9
+Version: 1.5.0
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -35,13 +35,17 @@ function iqrcodes_do_page() {
 
 	// some values necessary for display
 	
+	$useLogo = array("no" => " ", "yes" => " ");
+	switch ($opt[9]) {
+		case "yes": 	$useLogo['yes'] = 'selected'; break;
+		default:    $useLogo['no'] 	= 'selected'; break;
+	}
 	$D_chk = $P_chk = null;
 	switch ($opt[4]) {
-		case 'preserve': $P_chk = 'checked'; break;
-		case 'delete':   $D_chk = 'checked'; break;
-		default:  	 $P_chk = 'checked'; break;
+		case 'preserve':	$P_chk = 'checked'; break;
+		case 'delete':		$D_chk = 'checked'; break;
+		default:  	 		$P_chk = 'checked'; break;
 	}
-	
 	$H_chk = $Q_chk = $M_chk = $L_chk = null;
 	switch ($opt[1]) {
 		case 'H': $H_chk = 'checked'; break;
@@ -60,9 +64,9 @@ function iqrcodes_do_page() {
 
 	$logoPosSel = array("center" => "", "topleft" => "", "topright" => "");
 	switch ($opt[7]) {
-		case 'topleft':	 $logoPosSel['topleft']  = 'selected'; break;
-		case 'topright': $logoPosSel['topright'] = 'selected'; break;
-		default:	 $logoPosSel['center']   = 'selected'; break;
+		case 'topleft':		$logoPosSel['topleft']  = 'selected'; break;
+		case 'topright':	$logoPosSel['topright'] = 'selected'; break;
+		default:			$logoPosSel['center']   = 'selected'; break;
 	}
 
 	$base = YOURLS_SITE;
@@ -159,11 +163,19 @@ echo <<<HTML
 					</div>
 					<hr/>
 					<h3>Logo Settings</h3>
+					<p>A logo can be inserted into each generated QR code.</p>
+					<h4>Use Logo?</h4>
+					<div style="padding-left: 10pt;">
+						<select name="iqrcodes_logo_do" size="1">
+							<option value="no" {$useLogo['no']}>No</option>
+							<option value="yes" {$useLogo['yes']}>Yes</option>
+						</select>
+					</div>
 					$logoIs
 					<h4>Upload Image</h4>
 					<div style="padding-left: 10pt;">
 						<input type="file" name="iqrcodes_logo_file" />
-					</div><p>Supported filetypes: jpg/png/svg</p>
+					</div><p>Supported filetypes: jpg/png/svg</p><p>If you have issues with the logo, try converting your file to the default: png, before upload.</p><p> If there are still issues, try matching the qr code output image type to the logo file type, png is preferred.</p>
 
 					<h4>Scaling</h4>
 					<div style="padding-left: 10pt;">
@@ -340,11 +352,14 @@ function iqrcodes_form_0() {
 
 		// logo settings: hard reset of all values included due to bugginess
 		if($_POST['iqrcodesLogoReset'] == 'reset' ) {
+			yourls_delete_option('iqrcodes_logo_do');
+			yourls_delete_option('iqrcodes_logo_file_type');
 			yourls_delete_option('iqrcodes_logo_scale');
 			yourls_delete_option('iqrcodes_logo_position');
 			iqrcodes_logo_mgr($pcloc, 'no');
 		}
 		elseif($_POST['iqrcodesLogoReset'] == 'preserve' ) {
+			yourls_update_option('iqrcodes_logo_do', $_POST['iqrcodes_logo_do']);
 			yourls_update_option('iqrcodes_logo_scale', $_POST['iqrcodes_logo_scale']);
 			yourls_update_option('iqrcodes_logo_position', $_POST['iqrcodes_logo_position']);
 
@@ -376,16 +391,20 @@ function iqrcodes_get_opts() {
 	$imagetype	= yourls_get_option('iqrcodes_imagetype');
 	$logo_scale	= yourls_get_option('iqrcodes_logo_scale');
 	$logo_pos	= yourls_get_option('iqrcodes_logo_position');
+	$logo_ft	= yourls_get_option('iqrcodes_logo_file_type');
+	$logo_do	= yourls_get_option('iqrcodes_logo_do');
 	
 	// Set defaults
-	if ($QRC_DIR 	== null) $QRC_DIR	= 'user/cache/qr';
-	if ($EC 	== null) $EC_LVL 	= 'H';
-	if ($img_size 	== null) $img_size 	= '5';			// 165 X 165 (10 = 330 X 330)
-	if ($bdr_size 	== null) $bdr_size 	= '2';
-	if ($afterlife  == null) $afterlife	= 'preserve';
+	if ($QRC_DIR 	== null) $QRC_DIR		= 'user/cache/qr';
+	if ($EC 		== null) $EC_LVL 		= 'H';
+	if ($img_size 	== null) $img_size 		= '5';			// 165 X 165 (10 = 330 X 330)
+	if ($bdr_size 	== null) $bdr_size 		= '2';
+	if ($afterlife  == null) $afterlife		= 'preserve';
 	if ($imagetype	== null) $imagetype 	= 'png';
 	if ($logo_scale	== null) $logo_scale 	= '0.25';
-	if ($logo_pos 	== null) $logo_pos 	= 'center';
+	if ($logo_pos 	== null) $logo_pos 		= 'center';
+	if ($logo_ft 	== null) $logo_ft 		= 'png';
+	if ($logo_do 	== null) $logo_do 		= "no";
 	
 	// Return values
 	return array(
@@ -395,8 +414,10 @@ function iqrcodes_get_opts() {
 		$bdr_size,	// opt[3]
 		$afterlife,	// opt[4]
 		$imagetype,	// opt[5]
-		$logo_scale,	// opt[6]
+		$logo_scale,// opt[6]
 		$logo_pos,	// opt[7]
+		$logo_ft,	// opt[8]
+		$logo_do,	// opt[9]
 	);
 }
 
@@ -554,6 +575,7 @@ function iqrcodes_logo_mgr( $cache, $isNewLogo ) {
 	}
 	if( $isNewLogo !== 'no' ) {
 		$path_parts = pathinfo($isNewLogo['name']);
+		yourls_update_option( 'iqrcodes_logo_file_type', $path_parts['extension']);
 		move_uploaded_file($isNewLogo['tmp_name'], YOURLS_ABSPATH."/".$cache."/logo.".$path_parts['extension']);
 	}
 }

@@ -267,7 +267,7 @@
 	    }
 	}
 
-	public static function position($pos="center", $objSize1, $objSize2) {
+	public static function position($position=" ", $objSize1, $objSize2) {
 		$p = array();
 		switch($position) {
 			default:
@@ -280,7 +280,7 @@
 				$p['y'] = 0;
 			break;
 			case "topright":
-				$p['x'] = $QR_width - $objSize2[0];
+				$p['x'] = $objSize1[0] - $objSize2[0];
 				$p['y'] = 0;
 			break;
 		}
@@ -918,12 +918,12 @@
             ImageDestroy($image);
         }
 
-        //----------------------------------------------------------------------
+        //---------------------------------------------------------------------- PRONK
 	private static function addLogo(&$image) {
 		$opt = iqrcodes_get_opts();
-		$logoPath = $_SERVER['DOCUMENT_ROOT']."/user/plugins/iqrcodes/logo.".$opt[5];
+		$logoPath = YOURLS_ABSPATH."/".$opt[0]."/logo.".$opt[8];
 
-		if($opt[6]!==0 && file_exists($logoPath)){
+		if($opt[9]!=="no" && file_exists($logoPath)){
 			$position = $opt[7];
 			$s = $opt[6];
 		} else {
@@ -3314,11 +3314,12 @@
 		}
 	}
 
-        //----------------------------------------------------------------------
+        //---------------------------------------------------------------------- PRONK
 	private static function addLogo(&$src) {
 		$opt = iqrcodes_get_opts();
-		$logoPath = $_SERVER['DOCUMENT_ROOT']."/user/plugins/iqrcodes/logo.".$opt[5];
-		if($opt[6]!==0 && file_exists($logoPath)){
+		$logoPath = YOURLS_ABSPATH."/".$opt[0]."/logo.".$opt[8];
+
+		if($opt[9]!=="no" && file_exists($logoPath)){
 			$position = $opt[7];
 			$s = $opt[6];
 		} else {
