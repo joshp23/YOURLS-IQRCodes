@@ -33,9 +33,13 @@ This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcod
 ## Installation (Under Apache)
 1. Download the [latest release](https://github.com/joshp23/YOURLS-IQRCodes/releases/latest) of this repo and extract the `iqrcodes` folder to `YOURLS/user/plugins/`
 	- the following commands are run from `YOURLS` root folder. Eg, `/absolute/path/to/YOURLS`
-2. Symlink `srv.php` and `qrchk.php` into the `pages` folder
-	- `ln -s user/plugins/iqrcodes/assets/U-SRV/srv.php pages/srv.php`
-	- `ln -s user/plugins/iqrcodes/assets/assets/qrchk.php pages/qrchk.php`
+2. Symlink or copy `srv.php` and `qrchk.php` into the `pages` folder
+    - Symlink:  
+      `ln -s user/plugins/iqrcodes/assets/U-SRV/srv.php pages/srv.php`  
+	  `ln -s user/plugins/iqrcodes/assets/qrchk.php pages/qrchk.php`  
+    - Copy:  
+	  `cp user/plugins/iqrcodes/assets/U-SRV/srv.php pages/srv.php pages/srv.php`   
+	  `cp user/plugins/iqrcodes/assets/qrchk.php pages/qrchk.php`
 3. Set permissions and cache
     -  There needs to be two folders called cache (from YOURLS root)
        -  `user/plugins/iqrcodes/cache`   
@@ -72,7 +76,7 @@ if (!-e $request_filename){ rewrite ^(.+)$ /yourls-loader.php?q=$1 last; }
 
 ===========================
 
-    Copyright (C) 2016 - 2017 Josh Panter
+    Copyright (C) 2016 - 2018 Josh Panter
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
