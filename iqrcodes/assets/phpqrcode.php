@@ -918,7 +918,7 @@
             ImageDestroy($image);
         }
 
-        //---------------------------------------------------------------------- PRONK
+        //----------------------------------------------------------------------
 	private static function addLogo(&$image) {
 		$opt = iqrcodes_get_opts();
 		$logoPath = YOURLS_ABSPATH."/".$opt[0]."/logo.".$opt[8];
@@ -3314,7 +3314,7 @@
 		}
 	}
 
-        //---------------------------------------------------------------------- PRONK
+        //----------------------------------------------------------------------
 	private static function addLogo(&$src) {
 		$opt = iqrcodes_get_opts();
 		$logoPath = YOURLS_ABSPATH."/".$opt[0]."/logo.".$opt[8];
