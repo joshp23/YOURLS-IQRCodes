@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.5.1
+Version: 1.5.2
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -592,10 +592,15 @@ function iqrcodes_mass_chk() {
 	} else {
 		$table = 'url';
 	}
+	
+	if (version_compare(YOURLS_VERSION, '1.7.3') >= 0) {
+		$sql = "SELECT * FROM `$table` ORDER BY timestamp DESC";
+		$all_keys = $ydb->fetchObjects($sql);
+	} else {
+		$all_keys = $ydb->get_results("SELECT * FROM `$table` ORDER BY timestamp DESC");
 
-	$sql = "SELECT * FROM `$table` ORDER BY timestamp DESC";
-	$all_keys = $ydb->fetchObjects($sql);
-
+	}
+	
 	iqrcodes_mkdir( $opt[0] );
 
 	if($all_keys) {
