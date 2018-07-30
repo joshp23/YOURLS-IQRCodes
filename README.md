@@ -4,7 +4,7 @@ YOURLS Integrated QRCodes plugin with exposed options and full integration
 This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcode-plugin-for-yourls/354/) which is more compact, configurable, and just as efficient with more features.
 
 ## Requires:
-YOURLS 1.7.3 - install from git
+YOURLS 1.7.3 ready. Works with YOURLS 1.7.2
 
 ## Features
 ### Old
