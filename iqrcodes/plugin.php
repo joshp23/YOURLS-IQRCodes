@@ -312,7 +312,7 @@ HTML;
 yourls_add_action( 'html_head', 'iqrcodes_js' );
 function iqrcodes_js() {
 	$opt = iqrcodes_get_opts();
-	if ( YOURLS_JP23_HEAD_FILES == false || YOURLS_JP23_HEAD_FILES == null ) {
+	if ( YOURLS_JP23_HEAD_FILES !== true ) {
 
 		define( 'YOURLS_JP23_HEAD_FILES', true );
 
