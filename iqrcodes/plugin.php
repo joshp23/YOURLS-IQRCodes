@@ -321,11 +321,14 @@ function iqrcodes_js() {
 		echo "<! --------------------------JP23_HEAD_FILES END---------------------------- >\n";
 	}
 	$loc = yourls_plugin_url(dirname(__FILE__));
+	$file = dirname( __FILE__ )."/plugin.php";
+	$data = yourls_get_plugin_data( $file );
+	$v = $data['Version'];
 	echo "\n<! --------------------------IQRCodes Start-------------------------- >\n";
 	echo "<script type=\"text/javascript\">var iqrcodes_imagetype=\"".$opt[5]."\";</script>\n";
-	echo "<script src=\"".$loc."/assets/md5.min.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n" ;
-	echo "<script src=\"".$loc."/assets/iqrcodes.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n" ;
-	echo "<link rel=\"stylesheet\" href=\"".$loc."/assets/iqrcodes.css?v=".YOURLS_VERSION."\" type=\"text/css\" />\n";
+	echo "<script src=\"".$loc."/assets/md5.min.js?v=".$v."\" type=\"text/javascript\"></script>\n" ;
+	echo "<script src=\"".$loc."/assets/iqrcodes.js?v=".$v."\" type=\"text/javascript\"></script>\n" ;
+	echo "<link rel=\"stylesheet\" href=\"".$loc."/assets/iqrcodes.css?v=".$v."\" type=\"text/css\" />\n";
 	echo "<! --------------------------IQRCodes END---------------------------- >\n";
 }
 
