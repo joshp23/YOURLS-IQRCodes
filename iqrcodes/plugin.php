@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.5.4
+Version: 1.5.5
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -69,7 +69,7 @@ function iqrcodes_do_page() {
 		default:			$logoPosSel['center']   = 'selected'; break;
 	}
 
-	$base = yourls_site_url();
+	$base = YOURLS_SITE;
 	$key  = iqrcodes_key();
 	$fn = 'qrc_' . md5($base . '/V') . "." . $opt[5];
 
@@ -312,12 +312,12 @@ HTML;
 yourls_add_action( 'html_head', 'iqrcodes_js' );
 function iqrcodes_js() {
 	$opt = iqrcodes_get_opts();
-	if ( YOURLS_JP23_HEAD_FILES == null ) {
+	if ( defined('YOURLS_JP23_HEAD_FILES') == false ) {
 		define( 'YOURLS_JP23_HEAD_FILES', true );
-
+		$home = YOURLS_SITE;
 		echo "\n<! --------------------------JP23_HEAD_FILES Start-------------------------- >\n";
-		echo "<link rel=\"stylesheet\" href=\"".yourls_site_url()."/css/infos.css?v=".YOURLS_VERSION."\" type=\"text/css\" media=\"screen\" />\n";
-		echo "<script src=\"".yourls_site_url()."/js/infos.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n";
+		echo "<link rel=\"stylesheet\" href=\"".$home."/css/infos.css?v=".YOURLS_VERSION."\" type=\"text/css\" media=\"screen\" />\n";
+		echo "<script src=\"".$home."/js/infos.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n";
 		echo "<! --------------------------JP23_HEAD_FILES END---------------------------- >\n";
 	}
 	$loc = yourls_plugin_url(dirname(__FILE__));
@@ -442,7 +442,7 @@ function iqrcodes_key() {
 yourls_add_filter( 'add_new_link', 'iqrcodes_add_url' );
 function iqrcodes_add_url( $data ) {
             
-        $base = yourls_site_url();
+        $base = YOURLS_SITE;
         $key  = iqrcodes_key();
         $opt  = iqrcodes_get_opts();
         
@@ -482,7 +482,7 @@ function iqrcodes_edit_url( $data ) {
         $opt  = iqrcodes_get_opts();
 	iqrcodes_mkdir( $opt[0] );
 	
-        $base = yourls_site_url();
+        $base = YOURLS_SITE;
 
 	$oldfilepath = YOURLS_ABSPATH . '/' . $opt[0] . '/' . 'qrc_' . md5($base . '/' . $oldkeyword) . "." . $opt[5];
 	
@@ -594,7 +594,7 @@ function iqrcodes_logo_mgr( $cache, $isNewLogo ) {
 function iqrcodes_mass_chk() {
 
 	$opt = iqrcodes_get_opts();
-	$base = yourls_site_url();
+	$base = YOURLS_SITE;
 
 	global $ydb;
 	if( defined( 'YOURLS_DB_PREFIX' ) ) { 
