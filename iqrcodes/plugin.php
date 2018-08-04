@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.5.3
+Version: 1.5.4
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -69,7 +69,7 @@ function iqrcodes_do_page() {
 		default:			$logoPosSel['center']   = 'selected'; break;
 	}
 
-	$base = YOURLS_SITE;
+	$base = yourls_site_url();
 	$key  = iqrcodes_key();
 	$fn = 'qrc_' . md5($base . '/V') . "." . $opt[5];
 
@@ -312,20 +312,20 @@ HTML;
 yourls_add_action( 'html_head', 'iqrcodes_js' );
 function iqrcodes_js() {
 	$opt = iqrcodes_get_opts();
-	if ( YOURLS_JP23_HEAD_FILES !== true ) {
-
+	if ( YOURLS_JP23_HEAD_FILES == null ) {
 		define( 'YOURLS_JP23_HEAD_FILES', true );
 
 		echo "\n<! --------------------------JP23_HEAD_FILES Start-------------------------- >\n";
-		echo "<link rel=\"stylesheet\" href=\"/css/infos.css\" type=\"text/css\" media=\"screen\" />\n";
-		echo "<script src=\"/js/infos.js\" type=\"text/javascript\"></script>\n";
+		echo "<link rel=\"stylesheet\" href=\"".yourls_site_url()."/css/infos.css?v=".YOURLS_VERSION."\" type=\"text/css\" media=\"screen\" />\n";
+		echo "<script src=\"".yourls_site_url()."/js/infos.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n";
 		echo "<! --------------------------JP23_HEAD_FILES END---------------------------- >\n";
 	}
+	$loc = yourls_plugin_url(dirname(__FILE__));
 	echo "\n<! --------------------------IQRCodes Start-------------------------- >\n";
 	echo "<script type=\"text/javascript\">var iqrcodes_imagetype=\"".$opt[5]."\";</script>\n";
-	echo "<script src=\"". yourls_plugin_url( dirname( __FILE__ ) ). "/assets/md5.min.js\" type=\"text/javascript\"></script>\n" ;
-	echo "<script src=\"". yourls_plugin_url( dirname( __FILE__ ) ). "/assets/iqrcodes.js\" type=\"text/javascript\"></script>\n" ;
-	echo "<link rel=\"stylesheet\" href=\"". yourls_plugin_url( dirname( __FILE__ ) ) . "/assets/iqrcodes.css\" type=\"text/css\" />\n";
+	echo "<script src=\"".$loc."/assets/md5.min.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n" ;
+	echo "<script src=\"".$loc."/assets/iqrcodes.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n" ;
+	echo "<link rel=\"stylesheet\" href=\"".$loc."/assets/iqrcodes.css?v=".YOURLS_VERSION."\" type=\"text/css\" />\n";
 	echo "<! --------------------------IQRCodes END---------------------------- >\n";
 }
 
@@ -439,7 +439,7 @@ function iqrcodes_key() {
 yourls_add_filter( 'add_new_link', 'iqrcodes_add_url' );
 function iqrcodes_add_url( $data ) {
             
-        $base = YOURLS_SITE;
+        $base = yourls_site_url();
         $key  = iqrcodes_key();
         $opt  = iqrcodes_get_opts();
         
@@ -479,7 +479,7 @@ function iqrcodes_edit_url( $data ) {
         $opt  = iqrcodes_get_opts();
 	iqrcodes_mkdir( $opt[0] );
 	
-        $base = YOURLS_SITE;
+        $base = yourls_site_url();
 
 	$oldfilepath = YOURLS_ABSPATH . '/' . $opt[0] . '/' . 'qrc_' . md5($base . '/' . $oldkeyword) . "." . $opt[5];
 	
@@ -591,7 +591,7 @@ function iqrcodes_logo_mgr( $cache, $isNewLogo ) {
 function iqrcodes_mass_chk() {
 
 	$opt = iqrcodes_get_opts();
-	$base = YOURLS_SITE;
+	$base = yourls_site_url();
 
 	global $ydb;
 	if( defined( 'YOURLS_DB_PREFIX' ) ) { 
