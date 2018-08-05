@@ -24,12 +24,12 @@ if( ($_POST['action'] == 'qrchk') && isset($_POST['data']) && ($_POST['data'] !=
 	$data = $_POST['data'];
 	$shorturl = urldecode( $data );
 
-        $opt  = iqrcodes_get_opts();
+    $opt  = iqrcodes_get_opts();
 	$filename = '/qrc_' . md5($shorturl) . "." . $opt[5];
-	$filepath = YOURLS_ABSPATH . '/' . $opt[0]. '/' . $filename;
-	
+	$filepath = $opt[10]. '/' . $filename;
+
 	if ( !file_exists( $filepath ) && $shorturl == !null ) {
-		iqrcodes_mkdir( $opt[0] );
+		iqrcodes_mkdir( $opt[10] );
 		QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
 	}
 } else {

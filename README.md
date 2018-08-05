@@ -3,8 +3,11 @@ YOURLS Integrated QRCodes plugin with exposed options and full integration
 
 This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcode-plugin-for-yourls/354/) which is more compact, configurable, and just as efficient with more features.
 
+Updating to v2.0.0 + from the 1.x.x branch may cause some unexpected behavior. Deleting the cache and re-generating qr codes may be necessary. Note, attempting to install this before the required U-SRV will result in failure.
+
 ## Requires:
 YOURLS 1.7.3 ready. Works with YOURLS 1.7.2
+[U-SRV](https://github.com/joshp23/YOURLS-U-SRV) v2.0.0 +
 
 ## Features
 ### Old
@@ -34,28 +37,25 @@ YOURLS 1.7.3 ready. Works with YOURLS 1.7.2
   * This can halfed again by disabling and deleting the PHP QR Code cache, which was left in for enhanced performance. This setting can be found on lnie 100 of `assets/phpqrcode.php`
 
 ## Installation (Under Apache)
-1. Download the [latest release](https://github.com/joshp23/YOURLS-IQRCodes/releases/latest) of this repo and extract the `iqrcodes` folder to `YOURLS/user/plugins/`
+1. Download and install YOURLS and U-SRV. U-SRV will have created it's cache, within which will sit the IQRCodes's cache.
+2. Download the [latest release](https://github.com/joshp23/YOURLS-IQRCodes/releases/latest) of this repo and extract the `iqrcodes` folder to `YOURLS/user/plugins/`
 	- the following commands are run from `YOURLS` root folder. Eg, `/absolute/path/to/YOURLS`
-2. Symlink or copy `srv.php` and `qrchk.php` into the `pages` folder
+3. Symlink or copy `qrchk.php` into the `pages` folder. Automation of this task is planned for a future release.
     - Symlink:  
-      `ln -s user/plugins/iqrcodes/assets/U-SRV/srv.php pages/srv.php`  
 	  `ln -s user/plugins/iqrcodes/assets/qrchk.php pages/qrchk.php`  
     - Copy:  
-	  `cp user/plugins/iqrcodes/assets/U-SRV/srv.php pages/srv.php pages/srv.php`   
 	  `cp user/plugins/iqrcodes/assets/qrchk.php pages/qrchk.php`
 3. Set permissions and cache
-    -  There needs to be two folders called cache (from YOURLS root)
+    -  There needs to be two cache folders (relative to YOURLS root)
        -  `user/plugins/iqrcodes/cache`   
-       included with the plugin download
-       -  `user/cache/qr`   
-       must be created
-    - You just can do something like this, and iqrcodes will try to create the second cache for you:
-       -  `chown -R www-data:www-data /PATH/TO/YOURLS`   
-    - Or just do the following from YOURLS root:
-      -  `mkdir user/cache/qr`
-      -  `chown -R www-data:www-data user/cache`
-      -  `chown -R www-data:www-data user/plugins/iqrcodes`
-      -  `chmod -R 777 user/cache`
+       is included with the plugin download
+       -  `/path/to/U-SRV/cache/qr`   
+       iqrcodes will attempt to create this
+    - In case of failure just do somethign like the following (as root):
+      -  `mkdir /PATH/TO/U-SRV/CACHE/qr`
+      -  `chmod -R 777 /PATH/TO/U-SRV/CACHE`
+      -  `chown -R www-data:www-data /PATH/TO/U-SRV/CACHE`
+      -  `chown -R www-data:www-data /PATH/TO/YOURLS/user/plugins/iqrcodes`
 4. Enable module, default config works fine, or visit IQRCodes page to fine tune.
 5. Have fun!
 

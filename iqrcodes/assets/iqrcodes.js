@@ -47,3 +47,4 @@ $(document).ready( function( ){
 	});		  
 	iqrcodes();
 });
+

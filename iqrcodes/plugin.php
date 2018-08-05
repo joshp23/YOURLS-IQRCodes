@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 1.5.5
+Version: 2.0.0
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -28,7 +28,7 @@ function iqrcodes_do_page() {
 	$opt = iqrcodes_get_opts();
 
 	// Make sure cache exists
-	iqrcodes_mkdir( $opt[0] );
+	iqrcodes_mkdir( $opt[10] );
 	
 	// Create nonce
 	$nonce = yourls_create_nonce( 'iqrcodes' );
@@ -98,12 +98,42 @@ echo <<<HTML
 				</ul>
 			</div>
 			<div id="stat_tab_options" class="tab">
+					<h3>U-SRV Checks</h3>
+					<p>Plugin: 
+HTML;
+	if(!(yourls_is_active_plugin('usrv/plugin.php'))) {
+		echo '<span style="font-weight:bold;color:red;">Missing!</span>This plugin depends on the <a href="https://github.com/joshp23/YOURLS-U-SRV" target="_blank">U-SRV</a> plugin, download and activate it before using this plugin.</p>';
+	} else {
+		echo '<span style="color:green;">Success</span>: U-SRV is installed and enabled.</p>';
+		echo '<p><code>srv.php</code> satus: ';
+
+		$srvLoc = YOURLS_ABSPATH.'/pages/srv.php';
+		if ( !file_exists( $srvLoc ) ) {
+	 		echo '<font color="red">srv.php is not in the "pages" directory!</font>';
+		} else { 
+			$pluginData = yourls_get_plugin_data( YOURLS_ABSPATH.'/user/plugins/usrv/plugin.php' );
+			$pluginVers = $pluginData['Version'];
+			$srvData = yourls_get_plugin_data( $srvLoc );
+			$servVers = $srvData['Version'];
+			$status = version_compare($pluginVers, $servVers);
+			switch ($status) {
+				case 1: echo '<font color="red">ERROR</font>: installed version in "pages" directory is outdated.'; break;
+				case 0: echo '<font color="green">Success</font>: installed and up to date.</font>'; break;
+				case -1: echo '<font color="blue">Dev</font>: installed and newer than plugin.</font>'; break;
+				default: echo '<font color="red">ERROR</font>: No info available, please check your installation';
+			}
+		}
+	}
+	echo <<<HTML
+				<hr>
 				<form method="post" enctype="multipart/form-data">
 					<h3>Cache Settings</h3>
-					<h4>Image Cache Location</h4>
+					<h4>Image Cache</h4>
 					<div style="padding-left: 10pt;">
-						<p><input type="text" size=25 name="iqrcodes_cache_loc" value="$opt[0]" /></p>
-						<p>Please set the cache location, do not include a preceeding or trailing slash.</p>
+						<p><input type="text" size=25 name="iqrcodes_usrv_dir" value="$opt[0]" /></p>
+						<p>Current full path: <code>$opt[10]</code></p>
+						<p>Name the cache folder here, do not include a preceeding or trailing slash.</p>
+						<small>Hint:Change the parent cache location in the U-SRV settings.</small></p>
 					</div>
 
 					<h4>Cache Afterlife</h4>
@@ -335,21 +365,27 @@ function iqrcodes_js() {
 // form handlers
 function iqrcodes_form_0() {
 	// check for POST: if one is set, they all are
-	if(isset($_POST['iqrcodes_cache_loc'])) {
+	if(isset($_POST['iqrcodes_usrv_dir'])) {
 
 		yourls_verify_nonce( 'iqrcodes' );
 
 		// cache check, set, and update
-		$pcloc = $_POST['iqrcodes_cache_loc'];
-		$ocloc = yourls_get_option( 'iqrcodes_cache_loc' );
+		$postCacheLoc = $_POST['iqrcodes_usrv_dir'];
+		$optsCacheLoc = yourls_get_option( 'iqrcodes_usrv_dir' );
 
-		if ($pcloc !== $ocloc ) {
-			if ($ocloc == null ) {
-				iqrcodes_mkdir( $pcloc );
-				yourls_update_option( 'iqrcodes_cache_loc', $pcloc);
+		$USRV_DIR = yourls_get_option('usrv_cache_loc');
+		if ($USRV_DIR == null) $USRV_DIR = dirname(YOURLS_ABSPATH)."/YOURLS_CACHE";
+		$postCacheLocFull = $USRV_DIR .'/'. $postCacheLoc;
+		$optsCacheLocFull = $USRV_DIR .'/'. $optsCacheLoc;
+
+		if ($postCacheLoc !== $optsCacheLoc ) {
+
+			if ($optsCacheLoc == null ) {
+				iqrcodes_mkdir( $postCacheLocFull );
+				yourls_update_option( 'iqrcodes_usrv_dir', $postCacheLoc);
 			} else {
-				iqrcodes_mvdir( $ocloc , $pcloc );
-				yourls_update_option( 'iqrcodes_cache_loc', $pcloc );
+				iqrcodes_mvdir( $optsCacheLocFull , $postCacheLocFull );
+				yourls_update_option( 'iqrcodes_usrv_dir', $postCacheLoc );
 			}
 		}
 
@@ -366,7 +402,7 @@ function iqrcodes_form_0() {
 			yourls_delete_option('iqrcodes_logo_file_type');
 			yourls_delete_option('iqrcodes_logo_scale');
 			yourls_delete_option('iqrcodes_logo_position');
-			iqrcodes_logo_mgr($pcloc, 'no');
+			iqrcodes_logo_mgr($postCacheLocFull, 'no');
 		}
 		elseif($_POST['iqrcodesLogoReset'] == 'preserve' ) {
 			yourls_update_option('iqrcodes_logo_do', $_POST['iqrcodes_logo_do']);
@@ -375,7 +411,7 @@ function iqrcodes_form_0() {
 
 			if(isset($_FILES['iqrcodes_logo_file']) 
 			&& in_array($_FILES['iqrcodes_logo_file']['type'], array("image/jpeg", "image/svg+xml", "image/png"))) 
-				iqrcodes_logo_mgr($pcloc, $_FILES['iqrcodes_logo_file']);
+				iqrcodes_logo_mgr($postCacheLocFull, $_FILES['iqrcodes_logo_file']);
 		}
 	}
 }
@@ -393,7 +429,7 @@ function iqrcodes_form_1() {
 function iqrcodes_get_opts() {
 
 	// Check DB
-	$QRC_DIR 	= yourls_get_option('iqrcodes_cache_loc');
+	$QRC_DIR 	= yourls_get_option('iqrcodes_usrv_dir');
 	$EC 		= yourls_get_option('iqrcodes_EC');
 	$img_size 	= yourls_get_option('iqrcodes_img_size');
 	$bdr_size 	= yourls_get_option('iqrcodes_border_size');
@@ -403,9 +439,10 @@ function iqrcodes_get_opts() {
 	$logo_pos	= yourls_get_option('iqrcodes_logo_position');
 	$logo_ft	= yourls_get_option('iqrcodes_logo_file_type');
 	$logo_do	= yourls_get_option('iqrcodes_logo_do');
+	$USRV_DIR 	= yourls_get_option('usrv_cache_loc');
 	
 	// Set defaults
-	if ($QRC_DIR 	== null) $QRC_DIR		= 'user/cache/qr';
+	if ($QRC_DIR 	== null) $QRC_DIR		= 'qr';
 	if ($EC 		== null) $EC_LVL 		= 'H';
 	if ($img_size 	== null) $img_size 		= '5';			// 165 X 165 (10 = 330 X 330)
 	if ($bdr_size 	== null) $bdr_size 		= '2';
@@ -415,6 +452,8 @@ function iqrcodes_get_opts() {
 	if ($logo_pos 	== null) $logo_pos 		= 'center';
 	if ($logo_ft 	== null) $logo_ft 		= 'png';
 	if ($logo_do 	== null) $logo_do 		= "no";
+	if ($USRV_DIR 	== null) $USRV_DIR		= dirname(YOURLS_ABSPATH)."/YOURLS_CACHE";
+							 $DIR_PATH 		= $USRV_DIR.'/'.$QRC_DIR;
 	
 	// Return values
 	return array(
@@ -428,6 +467,7 @@ function iqrcodes_get_opts() {
 		$logo_pos,	// opt[7]
 		$logo_ft,	// opt[8]
 		$logo_do,	// opt[9]
+		$DIR_PATH	// opt[10]
 	);
 }
 
@@ -442,16 +482,16 @@ function iqrcodes_key() {
 yourls_add_filter( 'add_new_link', 'iqrcodes_add_url' );
 function iqrcodes_add_url( $data ) {
             
-        $base = YOURLS_SITE;
-        $key  = iqrcodes_key();
-        $opt  = iqrcodes_get_opts();
+    $base = YOURLS_SITE;
+    $key  = iqrcodes_key();
+    $opt  = iqrcodes_get_opts();
         
 	$shorturl = $data['shorturl'];
 	
-	iqrcodes_mkdir( $opt[0] );
+	iqrcodes_mkdir( $opt[10] );
 
 	$filename = 'qrc_'. md5($shorturl) . "." . $opt[5];
-	$filepath = YOURLS_ABSPATH . '/' . $opt[0]. '/' . $filename;
+	$filepath = $opt[10]. '/' . $filename;
 	
 	$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $filename;
 	
@@ -479,20 +519,20 @@ function iqrcodes_edit_url( $data ) {
 	$oldkeyword = $data[1];
 	$newkeyword = $data[2];
 	
-        $opt  = iqrcodes_get_opts();
-	iqrcodes_mkdir( $opt[0] );
+	$opt  = iqrcodes_get_opts();
+	iqrcodes_mkdir( $opt[10] );
 	
-        $base = YOURLS_SITE;
+	$base = YOURLS_SITE;
 
-	$oldfilepath = YOURLS_ABSPATH . '/' . $opt[0] . '/' . 'qrc_' . md5($base . '/' . $oldkeyword) . "." . $opt[5];
+	$oldfilepath = $opt[10] . '/' . 'qrc_' . md5($base . '/' . $oldkeyword) . "." . $opt[5];
 	
 	if ( file_exists( $oldfilepath ))
 		unlink( $oldfilepath );
 	
 	$newfilename = 'qrc_' . md5($base . '/' . $newkeyword) . "." . $opt[5];
-	$newfilepath = YOURLS_ABSPATH . '/' . $opt[0] . '/' . $newfilename;
+	$newfilepath = $opt[10] . '/' . $newfilename;
 	
-        $key  = iqrcodes_key();
+	$key  = iqrcodes_key();
 	$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $newfilename;
 
 	$data['qrcimg'] = $imgname;
@@ -507,10 +547,10 @@ yourls_add_action ( 'delete_link' , 'iqrcodes_delete_url' );
 function iqrcodes_delete_url( $data ) {
 
 	$keyword = $data[0];
-        $opt  = iqrcodes_get_opts();
+       $opt  = iqrcodes_get_opts();
 	
 	$filename = 'qrc_' . md5(YOURLS_SITE . '/' . $keyword) . "." . $opt[5];
-	$filepath = YOURLS_ABSPATH . '/' . $opt[0]. '/' . $filename;
+	$filepath = $opt[10]. '/' . $filename;
 
 	if ( file_exists( $filepath ))
 		unlink( $filepath );		
@@ -521,9 +561,15 @@ function iqrcodes_delete_url( $data ) {
 // Craete cache on enable
 yourls_add_action('activated_iqrcodes/plugin.php', 'iqrcodes_activate');
 function iqrcodes_activate() {
-
+	if(!(yourls_is_active_plugin('usrv/plugin.php'))) {
+		die('
+			<div class="notice">
+				<p style="text-align:center;font-weight:bold;color:red;">This plugin depends on the <a href="https://github.com/joshp23/YOURLS-U-SRV" target="_blank">U-SRV</a> plugin, activate it first in the admin section.</p>
+			</div>'
+		);
+	}
 	$opt = iqrcodes_get_opts();
-	iqrcodes_mkdir( $opt[0] );
+	iqrcodes_mkdir( $opt[10] );
 }
 
 // purge cache on disable
@@ -531,7 +577,7 @@ yourls_add_action('deactivated_iqrcodes/plugin.php', 'iqrcodes_deactivate');
 function iqrcodes_deactivate() {
 
 	$opt = iqrcodes_get_opts();
-	$dir = YOURLS_ABSPATH . '/' . $opt[0] . '/';
+	$dir = $opt[10] . '/';
 	
 	if($opt[4] == 'delete') {
 		if (file_exists($dir)) {
@@ -548,7 +594,6 @@ function iqrcodes_deactivate() {
 // Make dir if null
 function iqrcodes_mkdir( $new ) {	
 
-	$new = YOURLS_ABSPATH . '/' . $new . '/';
 	if ( !file_exists( $new ) ) {
 		mkdir( $new );
 		chmod( $new, 0777 );
@@ -559,9 +604,6 @@ function iqrcodes_mkdir( $new ) {
 
 // Move directory if option is updated
 function iqrcodes_mvdir( $old , $new ) {
-
-	$old = YOURLS_ABSPATH . '/' . $old . '/';
-	$new = YOURLS_ABSPATH . '/' . $new . '/';
 	
 	if ( !file_exists( $old ) || $old == null ) {
 		iqrcodes_mkdir( $new );
@@ -578,7 +620,7 @@ function iqrcodes_mvdir( $old , $new ) {
 // logo file manager
 function iqrcodes_logo_mgr( $cache, $isNewLogo ) {
 	// remove old logo(s)
-	foreach (glob ( YOURLS_ABSPATH."/".$cache."/logo.*") as $oldLogo) {
+	foreach (glob ( $cache."/logo.*") as $oldLogo) {
 
 		if ( file_exists( $oldLogo ))
 			unlink( $oldLogo );
@@ -586,7 +628,7 @@ function iqrcodes_logo_mgr( $cache, $isNewLogo ) {
 	if( $isNewLogo !== 'no' ) {
 		$path_parts = pathinfo($isNewLogo['name']);
 		yourls_update_option( 'iqrcodes_logo_file_type', $path_parts['extension']);
-		move_uploaded_file($isNewLogo['tmp_name'], YOURLS_ABSPATH."/".$cache."/logo.".$path_parts['extension']);
+		move_uploaded_file($isNewLogo['tmp_name'], $cache."/logo.".$path_parts['extension']);
 	}
 }
 
@@ -611,7 +653,7 @@ function iqrcodes_mass_chk() {
 
 	}
 	
-	iqrcodes_mkdir( $opt[0] );
+	iqrcodes_mkdir( $opt[10] );
 
 	if($all_keys) {
 		$i = 0;
@@ -619,7 +661,7 @@ function iqrcodes_mass_chk() {
 			$alias = $a_key->keyword;
 			$shorturl = $base . '/' . $alias;
 			$filename = '/qrc_' . md5($shorturl) . "." . $opt[5];
-			$filepath = YOURLS_ABSPATH . '/' . $opt[0]. '/' . $filename;
+			$filepath = $opt[10]. '/' . $filename;
 			if ( !file_exists( $filepath ) && $shorturl == !null ) {
 				QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
 				$i++;
