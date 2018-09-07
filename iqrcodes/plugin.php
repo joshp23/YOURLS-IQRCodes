@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 2.0.0
+Version: 2.0.1
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -340,26 +340,24 @@ HTML;
 
 //insert the JS and CSS files to head
 yourls_add_action( 'html_head', 'iqrcodes_js' );
-function iqrcodes_js() {
-	$opt = iqrcodes_get_opts();
-	if ( defined('YOURLS_JP23_HEAD_FILES') == false ) {
-		define( 'YOURLS_JP23_HEAD_FILES', true );
+function iqrcodes_js($context) {
+	if ( $context[0] == 'plugin_page_iqrcodes' ) {
 		$home = YOURLS_SITE;
-		echo "\n<! --------------------------JP23_HEAD_FILES Start-------------------------- >\n";
 		echo "<link rel=\"stylesheet\" href=\"".$home."/css/infos.css?v=".YOURLS_VERSION."\" type=\"text/css\" media=\"screen\" />\n";
 		echo "<script src=\"".$home."/js/infos.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n";
-		echo "<! --------------------------JP23_HEAD_FILES END---------------------------- >\n";
+	} elseif( !preg_match('/plugin.*/', $context[0] )) { 
+		$opt = iqrcodes_get_opts();
+		$loc = yourls_plugin_url(dirname(__FILE__));
+		$file = dirname( __FILE__ )."/plugin.php";
+		$data = yourls_get_plugin_data( $file );
+		$v = $data['Version'];
+		echo "\n<! --------------------------IQRCodes Start-------------------------- >\n";
+		echo "<script type=\"text/javascript\">var iqrcodes_imagetype=\"".$opt[5]."\";</script>\n";
+		echo "<script src=\"".$loc."/assets/md5.min.js?v=".$v."\" type=\"text/javascript\"></script>\n" ;
+		echo "<script src=\"".$loc."/assets/iqrcodes.js?v=".$v."\" type=\"text/javascript\"></script>\n" ;
+		echo "<link rel=\"stylesheet\" href=\"".$loc."/assets/iqrcodes.css?v=".$v."\" type=\"text/css\" />\n";
+		echo "<! --------------------------IQRCodes END---------------------------- >\n";
 	}
-	$loc = yourls_plugin_url(dirname(__FILE__));
-	$file = dirname( __FILE__ )."/plugin.php";
-	$data = yourls_get_plugin_data( $file );
-	$v = $data['Version'];
-	echo "\n<! --------------------------IQRCodes Start-------------------------- >\n";
-	echo "<script type=\"text/javascript\">var iqrcodes_imagetype=\"".$opt[5]."\";</script>\n";
-	echo "<script src=\"".$loc."/assets/md5.min.js?v=".$v."\" type=\"text/javascript\"></script>\n" ;
-	echo "<script src=\"".$loc."/assets/iqrcodes.js?v=".$v."\" type=\"text/javascript\"></script>\n" ;
-	echo "<link rel=\"stylesheet\" href=\"".$loc."/assets/iqrcodes.css?v=".$v."\" type=\"text/css\" />\n";
-	echo "<! --------------------------IQRCodes END---------------------------- >\n";
 }
 
 // form handlers
