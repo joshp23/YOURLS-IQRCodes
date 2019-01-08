@@ -35,8 +35,9 @@ YOURLS 1.7.3 ready. Works with YOURLS 1.7.2
 * Streamlined version of the QR Code generation library
 * Almost 1/2 the size of its predecessor
   * This can halfed again by disabling and deleting the PHP QR Code cache, which was left in for enhanced performance. This setting can be found on lnie 100 of `assets/phpqrcode.php`
+* Append `.qr` to any short url to display qr code
 
-## Installation (Under Apache)
+## Installation
 1. Download and install YOURLS and U-SRV. U-SRV will have created it's cache, within which will sit the IQRCodes's cache.
 2. Download the [latest release](https://github.com/joshp23/YOURLS-IQRCodes/releases/latest) of this repo and extract the `iqrcodes` folder to `YOURLS/user/plugins/`
 	- the following commands are run from `YOURLS` root folder. Eg, `/absolute/path/to/YOURLS`

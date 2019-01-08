@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 2.0.1
+Version: 2.1.0
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -672,4 +672,38 @@ function iqrcodes_mass_chk() {
 	} else {
 		echo '<p style="color:green;">No new QR Codes generated at this time.</p>';
 	}
+}
+
+yourls_add_action( 'loader_failed', 'iqrcode_dot_qr' );
+function iqrcode_dot_qr( $request ) {
+        // Get authorized charset in keywords and make a regexp pattern
+        $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
+        
+        // Shorturl is like bleh.qr?
+        if( preg_match( "@^([$pattern]+)\.qr?/?$@", $request[0], $matches ) ) {
+                // this shorturl exists?
+                $keyword = yourls_sanitize_keyword( $matches[1] );
+                if( yourls_is_shorturl( $keyword ) ) {
+
+					$shorturl 	= YOURLS_SITE.'/'.$keyword;
+					$key  		= iqrcodes_key();
+					$opt  		= iqrcodes_get_opts();
+
+					iqrcodes_mkdir( $opt[10] );
+
+					$filename = 'qrc_'. md5($shorturl) . "." . $opt[5];
+					$filepath = $opt[10]. '/' . $filename;
+
+					if ( !file_exists( $filepath ) ) {
+
+						QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+
+					}
+
+					$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $filename;
+
+					yourls_redirect( $imgname );
+					exit;
+                }
+        }
 }
