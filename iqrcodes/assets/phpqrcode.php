@@ -921,7 +921,7 @@
         //---------------------------------------------------------------------- 
 	private static function addLogo(&$image) {
 		$opt = iqrcodes_get_opts();
-		$logoPath = YOURLS_ABSPATH."/".$opt[0]."/logo.".$opt[8];
+		$logoPath = $opt[10]."/logo.".$opt[8];
 
 		if($opt[9]!=="no" && file_exists($logoPath)){
 			$position = $opt[7];

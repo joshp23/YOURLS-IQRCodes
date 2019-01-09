@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 2.1.0
+Version: 2.1.1
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -73,15 +73,14 @@ function iqrcodes_do_page() {
 	$key  = iqrcodes_key();
 	$fn = 'qrc_' . md5($base . '/V') . "." . $opt[5];
 
-	$isLogo = glob ( YOURLS_ABSPATH."/".$opt[0]."/logo.*");
+	$isLogo = glob ( $opt[10]."/logo.*");
 
 	if( isset($isLogo[1])) {
 		$logoIs = '<p style="color:red;">There is a problem with your setup, please use the reset option or re-upload your logo image file. If this does not fix the problem then you may have to check your cache location or folder permissions.</p>';
 	}
 	elseif( isset($isLogo[0])) {
-		$stamp  = filemtime($isLogo[0]);
-		$name   = basename($isLogo[0]).'?='.$stamp;
-		$logoIs = '<h4>Current Logo</h4><div style="width:128px;text-align:center"><img src="'.$base.'/'.$opt[0].'/'.$name.'" style="-webkit-filter:drop-shadow(5px 5px 5px #222); filter:drop-shadow(5px 5px 5px #222); max-width:128px;"><hr></div>';
+		$logoName  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=logo.' . $opt[8];
+		$logoIs = '<h4>Current Logo</h4><div style="width:128px;text-align:center"><img src="'.$logoName.'" style="-webkit-filter:drop-shadow(5px 5px 5px #222); filter:drop-shadow(5px 5px 5px #222); max-width:128px;"><hr></div>';
 	}
 	else {
 		$logoIs = '<h4 style="color:blue">No logo on file</h4>';
