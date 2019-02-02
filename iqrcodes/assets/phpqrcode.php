@@ -95,7 +95,7 @@
  */
  
  
-    $me = $_SERVER['DOCUMENT_ROOT'] .'user/plugins/iqrcodes/';
+    $me = $_SERVER['DOCUMENT_ROOT'] .'/user/plugins/iqrcodes/';
      
     define('QR_CACHEABLE', true);		// use cache; true = + IO / - CPU
     define('QR_CACHE_DIR', $me . 'cache/');	// if QR_CACHEABLE === true, cache dir
