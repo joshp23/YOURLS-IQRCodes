@@ -346,7 +346,7 @@ function iqrcodes_js($context) {
 		echo "<script src=\"".$home."/js/infos.js?v=".YOURLS_VERSION."\" type=\"text/javascript\"></script>\n";
 	} elseif( !preg_match('/plugin.*/', $context[0] )) { 
 		$opt = iqrcodes_get_opts();
-		$loc = yourls_plugin_url(dirname(__FILE__));
+		$loc = yourls_plugin_url(basename(dirname(__FILE__)));
 		$file = dirname( __FILE__ )."/plugin.php";
 		$data = yourls_get_plugin_data( $file );
 		$v = $data['Version'];
