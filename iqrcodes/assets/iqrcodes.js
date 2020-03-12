@@ -11,25 +11,9 @@ function iqrcodes(url, site) {
 			url: base_url + '/qrchk',
 			data:{action:'qrchk', data: shorturl}
 		});
-
-		function getCookie(name) {
-			var nameEQ = name + "=";
-			var ca = document.cookie.split(';');
-			for(var i=0;i < ca.length;i++) {
-				var c = ca[i];
-				while (c.charAt(0)==' ') c = c.substring(1,c.length);
-				if (c.indexOf(nameEQ) == 0)
-					if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-				}
-			return null;
-		}
-    		var timestamp = getCookie('usrv_iqrcodes');
-		var key = md5(timestamp + 'iqrcodes');
-		var fn = 'qrc_' + md5(shorturl) + '.png';
-		var qrcimg = base_url + '/srv/?id=iqrcodes&key=' + key + '&fn=' + fn;
 	}
 
-	var insertimg = "<div id='qrcode' class='share'><h3>QR Code</h3><img id='myid' src='" + qrcimg + "' /></div>";
+	var insertimg = "<div id='qrcode' class='share'><h3>QR Code</h3><img id='myid' src='" + shorturl + ".qr" + "' /></div>";
 	if ( $( '#qrcode' ).length > 0 )
 		$( '#qrcode' ).remove( );
 		$( "#shareboxes" ).append( insertimg );        // Append new elements
