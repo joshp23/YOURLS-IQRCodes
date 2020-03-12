@@ -478,30 +478,26 @@ function iqrcodes_key() {
 //Generate QRCode for new url added.
 yourls_add_filter( 'add_new_link', 'iqrcodes_add_url' );
 function iqrcodes_add_url( $data ) {
-            
     $base = YOURLS_SITE;
     $key  = iqrcodes_key();
     $opt  = iqrcodes_get_opts();
-        
 	$shorturl = $data['shorturl'];
-	
 	iqrcodes_mkdir( $opt[10] );
-
 	$filename = 'qrc_'. md5($shorturl) . "." . $opt[5];
 	$filepath = $opt[10]. '/' . $filename;
+	if ($opt[5] === 'svg') {
+		QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3], 0xFFFFFF, 0x000000 );
+	} else {
+		QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+	}
 	
-	$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $filename;
-	
-	$data['qrcimg'] = $imgname;
-	
-	QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
 	
 	if( !yourls_is_API() ) {
 		// required for direct call to yourls_add_new_link() which does not fire the javascript - lets do it manually
 		if ( isset( $data['html'] ) ) { 
-			$data['html'] .= "<script>iqrcodes( '$imgname' , '$base' );</script>";
+			$data['html'] .= "<script>iqrcodes( '$shorturl' , '$base' );</script>";
 		} else {
-			$data['html'] = "<script>iqrcodes( '$imgname' , '$base' );</script>";
+			$data['html'] = "<script>iqrcodes( '$shorturl' , '$base' );</script>";
 		}
 	
 	}			
@@ -512,29 +508,22 @@ function iqrcodes_add_url( $data ) {
 //Generate new QRCode when the shorturl is edited.
 yourls_add_filter ( 'pre_edit_link' , 'iqrcodes_edit_url' );
 function iqrcodes_edit_url( $data ) {
-		
 	$oldkeyword = $data[1];
 	$newkeyword = $data[2];
-	
 	$opt  = iqrcodes_get_opts();
 	iqrcodes_mkdir( $opt[10] );
-	
 	$base = YOURLS_SITE;
-
 	$oldfilepath = $opt[10] . '/' . 'qrc_' . md5($base . '/' . $oldkeyword) . "." . $opt[5];
-	
 	if ( file_exists( $oldfilepath ))
 		unlink( $oldfilepath );
-	
 	$newfilename = 'qrc_' . md5($base . '/' . $newkeyword) . "." . $opt[5];
 	$newfilepath = $opt[10] . '/' . $newfilename;
+	if ( $opt[5] === 'svg' ) {
+		QRcode::{$opt[5]}( $base . '/' . $newkeyword, $newfilepath,  $opt[1], $opt[2], $opt[3], 0xFFFFFF, 0x000000 );
+	} else {
+		QRcode::{$opt[5]}( $base . '/' . $newkeyword, $newfilepath,  $opt[1], $opt[2], $opt[3] );
+	}
 	
-	$key  = iqrcodes_key();
-	$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $newfilename;
-
-	$data['qrcimg'] = $imgname;
-	
-	QRcode::{$opt[5]}( $base . '/' . $newkeyword, $newfilepath,  $opt[1], $opt[2], $opt[3] );
 	
 	return $data;
 }
@@ -544,7 +533,7 @@ yourls_add_action ( 'delete_link' , 'iqrcodes_delete_url' );
 function iqrcodes_delete_url( $data ) {
 
 	$keyword = $data[0];
-       $opt  = iqrcodes_get_opts();
+    $opt  = iqrcodes_get_opts();
 	
 	$filename = 'qrc_' . md5(YOURLS_SITE . '/' . $keyword) . "." . $opt[5];
 	$filepath = $opt[10]. '/' . $filename;
@@ -660,7 +649,12 @@ function iqrcodes_mass_chk() {
 			$filename = '/qrc_' . md5($shorturl) . "." . $opt[5];
 			$filepath = $opt[10]. '/' . $filename;
 			if ( !file_exists( $filepath ) && $shorturl == !null ) {
-				QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+				if ( $opt[5] === 'svg' ) {
+					QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3], 0xFFFFFF, 0x000000 );
+				} else {
+					QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+				}
+				
 				$i++;
 			}
 		}
@@ -692,10 +686,13 @@ function iqrcode_dot_qr( $request ) {
 
 					$filename = 'qrc_'. md5($shorturl) . "." . $opt[5];
 					$filepath = $opt[10]. '/' . $filename;
-
 					if ( !file_exists( $filepath ) ) {
-
-						QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+						if ( $opt[5] === 'svg' ) {
+							QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3], 0xFFFFFF, 0x000000 );
+						} else {
+							QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+						}
+ 						
 
 					}
 

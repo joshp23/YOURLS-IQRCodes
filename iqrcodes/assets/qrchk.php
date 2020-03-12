@@ -30,7 +30,11 @@ if( ($_POST['action'] == 'qrchk') && isset($_POST['data']) && ($_POST['data'] !=
 
 	if ( !file_exists( $filepath ) && $shorturl == !null ) {
 		iqrcodes_mkdir( $opt[10] );
-		QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+		if ( $opt[5] === 'svg' ) {
+			QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3], 0xFFFFFF, 0x000000);
+		} else {
+			QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+		}
 	}
 } else {
 	echo <<<HTML
