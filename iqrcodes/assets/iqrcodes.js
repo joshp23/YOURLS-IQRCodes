@@ -4,7 +4,7 @@ function iqrcodes(url, site) {
 	}
 	else {
 		var shorturl = ( url == null ? $( '#copylink' ).val() : url );
-		var base_url = window.location.origin;
+		var base_url = YOURLS_SITE;
 
 		$.ajax({
 			type: "POST",

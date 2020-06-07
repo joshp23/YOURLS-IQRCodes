@@ -351,6 +351,9 @@ function iqrcodes_js($context) {
 		$data = yourls_get_plugin_data( $file );
 		$v = $data['Version'];
 		echo "\n<! --------------------------IQRCodes Start-------------------------- >\n";
+		echo "<script type=\"text/javascript\">\n";
+		echo "var YOURLS_SITE  = '".YOURLS_SITE."';\n";
+		echo "</script>\n";
 		echo "<script type=\"text/javascript\">var iqrcodes_imagetype=\"".$opt[5]."\";</script>\n";
 		echo "<script src=\"".$loc."/assets/md5.min.js?v=".$v."\" type=\"text/javascript\"></script>\n" ;
 		echo "<script src=\"".$loc."/assets/iqrcodes.js?v=".$v."\" type=\"text/javascript\"></script>\n" ;
