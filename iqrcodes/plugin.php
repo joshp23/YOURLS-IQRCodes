@@ -678,6 +678,7 @@ function iqrcodes_mass_chk() {
 
 yourls_add_action( 'loader_failed', 'iqrcode_dot_qr' );
 function iqrcode_dot_qr( $request ) {
+		$base = YOURLS_SITE;
         // Get authorized charset in keywords and make a regexp pattern
         $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
         
