@@ -351,6 +351,9 @@ function iqrcodes_js($context) {
 		$data = yourls_get_plugin_data( $file );
 		$v = $data['Version'];
 		echo "\n<! --------------------------IQRCodes Start-------------------------- >\n";
+		echo "<script type=\"text/javascript\">\n";
+		echo "var YOURLS_SITE  = '".YOURLS_SITE."';\n";
+		echo "</script>\n";
 		echo "<script type=\"text/javascript\">var iqrcodes_imagetype=\"".$opt[5]."\";</script>\n";
 		echo "<script src=\"".$loc."/assets/md5.min.js?v=".$v."\" type=\"text/javascript\"></script>\n" ;
 		echo "<script src=\"".$loc."/assets/iqrcodes.js?v=".$v."\" type=\"text/javascript\"></script>\n" ;
@@ -675,6 +678,7 @@ function iqrcodes_mass_chk() {
 
 yourls_add_action( 'loader_failed', 'iqrcode_dot_qr' );
 function iqrcode_dot_qr( $request ) {
+		$base = YOURLS_SITE;
         // Get authorized charset in keywords and make a regexp pattern
         $pattern = yourls_make_regexp_pattern( yourls_get_shorturl_charset() );
         
