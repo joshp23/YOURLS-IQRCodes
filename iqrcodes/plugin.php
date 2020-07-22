@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 2.2.0
+Version: 2.2.1
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -171,7 +171,7 @@ HTML;
 
 					<div style="padding-left: 10pt;">
 						<input type="hidden" name="iqrcodes_img_size" value="5">
-	  					<input type="number" name="iqrcodes_img_size" min="1" max="10" value=$opt[2]><br>
+	  					<input type="number" name="iqrcodes_img_size" min="1" max="100" value=$opt[2]><br>
 
 						<p>Set the pixel size for qr code image here.</p>
 						<p>Note:<p>
