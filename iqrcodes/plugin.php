@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 2.1.2
+Version: 2.2.0
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -106,7 +106,7 @@ HTML;
 		echo '<span style="color:green;">Success</span>: U-SRV is installed and enabled.</p>';
 		echo '<p><code>srv.php</code> satus: ';
 
-		$srvLoc = YOURLS_ABSPATH.'/pages/srv.php';
+		$srvLoc = YOURLS_ABSPATH.'/user/pages/srv.php';
 		if ( !file_exists( $srvLoc ) ) {
 	 		echo '<font color="red">srv.php is not in the "pages" directory!</font>';
 		} else { 
@@ -497,7 +497,11 @@ function iqrcodes_add_url( $data ) {
 	
 	$data['qrcimg'] = $imgname;
 	
-	QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+	if ( $opt[5] === 'svg' ) {
+			QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3], 0xFFFFFF, 0x000000);
+		} else {
+			QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+		}
 	
 	if( !yourls_is_API() ) {
 		// required for direct call to yourls_add_new_link() which does not fire the javascript - lets do it manually
@@ -645,13 +649,8 @@ function iqrcodes_mass_chk() {
 		$table = 'url';
 	}
 	
-	if (version_compare(YOURLS_VERSION, '1.7.3') >= 0) {
-		$sql = "SELECT * FROM `$table` ORDER BY timestamp DESC";
-		$all_keys = $ydb->fetchObjects($sql);
-	} else {
-		$all_keys = $ydb->get_results("SELECT * FROM `$table` ORDER BY timestamp DESC");
-
-	}
+	$sql = "SELECT * FROM `$table` ORDER BY timestamp DESC";
+	$all_keys = $ydb->fetchObjects($sql);
 	
 	iqrcodes_mkdir( $opt[10] );
 
@@ -663,7 +662,11 @@ function iqrcodes_mass_chk() {
 			$filename = '/qrc_' . md5($shorturl) . "." . $opt[5];
 			$filepath = $opt[10]. '/' . $filename;
 			if ( !file_exists( $filepath ) && $shorturl == !null ) {
-				QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+				if ( $opt[5] === 'svg' ) {
+					QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3], 0xFFFFFF, 0x000000);
+				} else {
+					QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+				}
 				$i++;
 			}
 		}
@@ -676,7 +679,7 @@ function iqrcodes_mass_chk() {
 	}
 }
 
-yourls_add_action( 'loader_failed', 'iqrcode_dot_qr' );
+yourls_add_action( 'pre_load_template', 'iqrcode_dot_qr' );
 function iqrcode_dot_qr( $request ) {
 		$base = YOURLS_SITE;
         // Get authorized charset in keywords and make a regexp pattern
@@ -698,9 +701,11 @@ function iqrcode_dot_qr( $request ) {
 					$filepath = $opt[10]. '/' . $filename;
 
 					if ( !file_exists( $filepath ) ) {
-
-						QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
-
+						if ( $opt[5] === 'svg' ) {
+							QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3], 0xFFFFFF, 0x000000);
+						} else {
+							QRcode::{$opt[5]}( $shorturl, $filepath, $opt[1], $opt[2], $opt[3] );
+						}
 					}
 
 					$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $filename;

@@ -3,10 +3,8 @@ YOURLS Integrated QRCodes plugin with exposed options and full integration
 
 This is an updated fork of [Inline QRCode](http://techlister.com/plugins-2/qrcode-plugin-for-yourls/354/) which is more compact, configurable, and just as efficient with more features.
 
-Updating to v2.0.0 + from the 1.x.x branch may cause some unexpected behavior. Deleting the cache and re-generating qr codes may be necessary. Note, attempting to install this before the required U-SRV will result in failure.
-
 ## Requires:
-YOURLS 1.7.3 ready. Works with YOURLS 1.7.2
+YOURLS 1.7.9 +
 [U-SRV](https://github.com/joshp23/YOURLS-U-SRV) v2.0.0 +
 
 ## Features
@@ -43,9 +41,9 @@ YOURLS 1.7.3 ready. Works with YOURLS 1.7.2
 	- the following commands are run from `YOURLS` root folder. Eg, `/absolute/path/to/YOURLS`
 3. Symlink or copy `qrchk.php` into the `pages` folder. Automation of this task is planned for a future release.
     - Symlink:  
-	  `ln -s user/plugins/iqrcodes/assets/qrchk.php pages/qrchk.php`  
+	  `ln -s user/plugins/iqrcodes/assets/qrchk.php user/pages/qrchk.php`  
     - Copy:  
-	  `cp user/plugins/iqrcodes/assets/qrchk.php pages/qrchk.php`
+	  `cp user/plugins/iqrcodes/assets/qrchk.php user/pages/qrchk.php`
 3. Set permissions and cache
     -  There needs to be two cache folders (relative to YOURLS root)
        -  `user/plugins/iqrcodes/cache`   
@@ -87,7 +85,7 @@ All of my published code is developed and maintained in spare time, if you would
 
 ===========================
 
-    Copyright (C) 2016 - 2018 Josh Panter
+    Copyright (C) 2016 Josh Panter
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

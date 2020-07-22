@@ -25,7 +25,7 @@ function iqrcodes(url, site) {
 		}
     		var timestamp = getCookie('usrv_iqrcodes');
 		var key = md5(timestamp + 'iqrcodes');
-		var fn = 'qrc_' + md5(shorturl) + '.png';
+		var fn = 'qrc_' + md5(shorturl) + '.' + iqrcodes_imagetype;
 		var qrcimg = base_url + '/srv/?id=iqrcodes&key=' + key + '&fn=' + fn;
 	}
 
