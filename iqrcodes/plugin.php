@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 2.3.0
+Version: 2.3.1
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -716,7 +716,11 @@ function iqrcode_dot_qr( $request ) {
 					}
 
 					$imgname  = $base . '/srv/?id=iqrcodes&key=' . $key . '&fn=' . $filename;
-
+					
+					yourls_add_filter ( 'redirect_code' , 'iqrcodes_redirect_code' );
+					function iqrcodes_redirect_code( $data ) {
+						return 302;
+					}
 					yourls_redirect( $imgname );
 					exit;
                 }
