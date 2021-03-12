@@ -3,7 +3,7 @@
 Plugin Name: IQRCodes
 Plugin URI: https://github.com/joshp23/YOURLS-IQRCodes
 Description: Integrated QR Codes
-Version: 2.2.1
+Version: 2.3.0
 Author: Josh Panter
 Author URI: https://unfettered.net
 */
@@ -562,13 +562,20 @@ function iqrcodes_delete_url( $data ) {
 	return $data;
 }
 
-// Craete cache on enable
+// Craete cache and check for dependencies on enable
 yourls_add_action('activated_iqrcodes/plugin.php', 'iqrcodes_activate');
 function iqrcodes_activate() {
 	if(!(yourls_is_active_plugin('usrv/plugin.php'))) {
 		die('
 			<div class="notice">
 				<p style="text-align:center;font-weight:bold;color:red;">This plugin depends on the <a href="https://github.com/joshp23/YOURLS-U-SRV" target="_blank">U-SRV</a> plugin, activate it first in the admin section.</p>
+			</div>'
+		);
+	}
+	if (!(function_exists('gd_info'))) {
+		die('
+			<div class="notice">
+				<p style="text-align:center;font-weight:bold;color:red;">This plugin depends on <a href="https://www.php.net/manual/en/book.image.php" target="_blank">PHP-GD</a>. Install this first on your system.</p>
 			</div>'
 		);
 	}
